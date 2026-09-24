@@ -1,0 +1,10 @@
+{
+  "description": "Streamlines project collaboration by enabling users to upload, share, and manage files seamlessly for efficient teamwork and communication.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
