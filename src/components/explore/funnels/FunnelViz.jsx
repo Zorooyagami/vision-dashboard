@@ -1,12 +1,15 @@
-import { fmtVol } from '../exploreUtils'
+// import { fmtVol } from '../exploreUtils'
 
 function FunnelViz({ steps, data }) {
   const max = data[0] || 1
   return (
     <div className="space-y-2 py-2">
       {steps.map((step, i) => {
-        const pct = Math.round((data[i] / max) * 100)
-        const drop = i > 0 ? Math.round(((data[i - 1] - data[i]) / data[i - 1]) * 100) : 0
+        const pct = Math.round(((data[i] || 0) / max) * 100)
+        // Real data can have zero users at a step, so guard the division.
+        const drop = i > 0 && data[i - 1] > 0
+          ? Math.round(((data[i - 1] - data[i]) / data[i - 1]) * 100)
+          : 0
         return (
           <div key={step}>
             {i > 0 && (
@@ -20,10 +23,10 @@ function FunnelViz({ steps, data }) {
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-mono font-semibold text-slate-700">{step}</span>
-                  <span className="text-xs font-bold text-slate-900">{fmtVol(data[i])} <span className="text-slate-400 font-normal">({pct}%)</span></span>
+                  <span className="text-xs font-bold text-slate-900">{(data[i] || 0)} <span className="text-slate-400 font-normal">({pct}%)</span></span>
                 </div>
                 <div className="h-2 rounded-full overflow-hidden" style={{ background: '#F1F5F9' }}>
-                  <div className="h-full rounded-full" style={{ width: `${pct}%`, background: '#6366F1', opacity: 1 - i * 0.12 }} />
+                  <div className="h-full rounded-full" style={{ width: `${pct}%`, background: '#6366F1', opacity: 1 - i * 0.08 }} />
                 </div>
               </div>
             </div>

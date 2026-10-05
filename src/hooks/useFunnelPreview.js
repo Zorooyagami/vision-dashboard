@@ -1,11 +1,9 @@
 // src/hooks/useFunnelPreview.js
 import { useEffect, useState } from 'react'
-import { useProject } from '../context/ProjectContext'
 import { previewFunnel } from '../services/funnelsService'
 
 // Real counts for an unsaved funnel, debounced while the user edits steps.
-export function useFunnelPreview(filters, steps) {
-  const { projectId } = useProject()
+export function useFunnelPreview(projectId, filters, steps, conversionWindowDays) {
   const [state, setState] = useState({ counts: null, loading: false, error: '' })
 
   const filterKey = JSON.stringify(filters ?? {})
@@ -25,7 +23,8 @@ export function useFunnelPreview(filters, steps) {
     const timer = setTimeout(async () => {
       try {
         const { counts } = await previewFunnel(
-          { steps: currentSteps },
+          projectId,
+          { steps: currentSteps, conversionWindowDays: Number(conversionWindowDays) },
           JSON.parse(filterKey),
           controller.signal,
         )
@@ -41,7 +40,7 @@ export function useFunnelPreview(filters, steps) {
       clearTimeout(timer)
       controller.abort()
     }
-  }, [projectId, filterKey, stepsKey])
+  }, [projectId, filterKey, stepsKey, conversionWindowDays])
 
   return state
 }

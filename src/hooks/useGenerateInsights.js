@@ -1,58 +1,64 @@
-// hooks/useGenerateInsights.js
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { apiRequest } from '../services/apiClient'
 
-const API_BASE = 'http://localhost:4000/api/admin';
+const API_BASE = '/api/admin'
 
 export function useGenerateInsights() {
-  const [generating, setGenerating] = useState(false);
-  const [error, setError] = useState(null);
-  const pollRef = useRef(null);
+  const [generating, setGenerating] = useState(false)
+  const [error, setError] = useState(null)
+  const pollRef = useRef(null)
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
-      clearInterval(pollRef.current);
-      pollRef.current = null;
+      clearInterval(pollRef.current)
+      pollRef.current = null
     }
-  }, []);
+  }, [])
+
+  useEffect(() => stopPolling, [stopPolling])
 
   const generate = useCallback(
-    (onComplete) => {
-      setError(null);
-      setGenerating(true);
+    async (onComplete) => {
+      setError(null)
+      setGenerating(true)
+      stopPolling()
 
-      fetch(`${API_BASE}/insights/generate`, { method: 'POST' })
-        .then((res) => {
-          if (res.status === 409) {
-            // already running — just start polling, don't error out
-            return;
-          }
-          if (!res.ok) throw new Error('Failed to start generation');
+      try {
+        const startResponse = await apiRequest(`${API_BASE}/insights/generate`, {
+          method: 'POST',
         })
-        .catch((err) => {
-          setError(err.message);
-          setGenerating(false);
-          return;
-        });
+
+        // 409 means generation is already running; polling should continue.
+        if (!startResponse.ok && startResponse.status !== 409) {
+          throw new Error('Failed to start insight generation')
+        }
+      } catch (err) {
+        setError(err.message)
+        setGenerating(false)
+        return
+      }
 
       pollRef.current = setInterval(async () => {
         try {
-          const res = await fetch(`${API_BASE}/insights/status`);
-          const { inProgress } = await res.json();
+          const response = await apiRequest(`${API_BASE}/insights/status`)
+          if (!response.ok) throw new Error('Unable to check generation status')
+
+          const { inProgress } = await response.json()
 
           if (!inProgress) {
-            stopPolling();
-            setGenerating(false);
-            onComplete?.();
+            stopPolling()
+            setGenerating(false)
+            onComplete?.()
           }
-        } catch (err) {
-          stopPolling();
-          setGenerating(false);
-          setError('Lost connection while checking status');
+        } catch {
+          stopPolling()
+          setGenerating(false)
+          setError('Lost connection while checking status')
         }
-      }, 3000); // poll every 3s
+      }, 3000)
     },
-    [stopPolling]
-  );
+    [stopPolling],
+  )
 
-  return { generate, generating, error };
+  return { generate, generating, error }
 }

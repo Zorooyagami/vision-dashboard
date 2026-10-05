@@ -1,51 +1,62 @@
 // src/services/funnelsService.js
-// Uses apiFetch like the other services: it adds API_BASE_URL and the X-Project-Id
-// header (active project from localStorage), and throws an Error with the server's
-// message on non-2xx responses.
-import { apiFetch } from './apiClient'
+// Every call sends the projectId. The server's requireProject middleware turns it
+// into req.projectId, and that value (never the request body) is what gets stored.
+//
+// Adjust `request()` to match however useUsers authenticates and sends the project
+// (header name, auth token, base URL). Everything else is independent of that.
 
 const BASE = '/api/explore/funnels'
 
-// Same filter -> query-string mapping as useUsers / eventsApi.
 function toQuery(filters = {}) {
-  const { period, customRange, platform, device, selectedPersonas } = filters
   const p = new URLSearchParams()
-
-  if (period) p.set('period', period)
-  if (period === 'custom' && customRange?.from && customRange?.to) {
-    p.set('from', customRange.from)
-    p.set('to', customRange.to)
+  if (filters.period) p.set('period', filters.period)
+  if (filters.period === 'custom' && filters.customRange) {
+    p.set('from', filters.customRange.from)
+    p.set('to', filters.customRange.to)
   }
-  if (platform && platform !== 'all') p.set('platform', platform)
-  if (device && device !== 'all') p.set('device', String(device).toLowerCase())
-  if (selectedPersonas?.length) p.set('personas', selectedPersonas.join(','))
-
+  if (filters.platform) p.set('platform', filters.platform)
+  if (filters.device && filters.device !== 'all') {
+    p.set('device', String(filters.device).toLowerCase())
+  }
   const s = p.toString()
   return s ? `?${s}` : ''
 }
 
-const request = (path, { method = 'GET', body, filters, signal } = {}) =>
-  apiFetch(`${BASE}${path}${toQuery(filters)}`, {
+async function request(projectId, path, { method = 'GET', body, filters, signal } = {}) {
+  const headers = { 'Content-Type': 'application/json' }
+  if (projectId) headers['X-Project-Id'] = String(projectId)
+  // + auth header here if your other services add one, e.g.
+  // headers.Authorization = `Bearer ${getToken()}`
+
+  const res = await fetch(`${BASE}${path}${toQuery(filters)}`, {
     method,
-    signal,
+    headers,
     body: body === undefined ? undefined : JSON.stringify(body),
+    signal,
   })
 
-export const listFunnels = (filters, signal) => request('', { filters, signal })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`)
+  return data
+}
 
-export const listTrackedEvents = (signal) => request('/events', { signal })
+export const listFunnels = (projectId, filters, signal) =>
+  request(projectId, '', { filters, signal })
 
-export const createFunnel = (payload, filters) =>
-  request('', { method: 'POST', body: payload, filters })
+export const listTrackedEvents = (projectId, signal) =>
+  request(projectId, '/events', { signal })
 
-export const updateFunnel = (id, payload, filters) =>
-  request(`/${encodeURIComponent(id)}`, { method: 'PUT', body: payload, filters })
+export const createFunnel = (projectId, payload, filters) =>
+  request(projectId, '', { method: 'POST', body: payload, filters })
 
-export const deleteFunnel = (id) =>
-  request(`/${encodeURIComponent(id)}`, { method: 'DELETE' })
+export const updateFunnel = (projectId, id, payload, filters) =>
+  request(projectId, `/${encodeURIComponent(id)}`, { method: 'PUT', body: payload, filters })
 
-export const duplicateFunnel = (id, filters) =>
-  request(`/${encodeURIComponent(id)}/duplicate`, { method: 'POST', filters })
+export const deleteFunnel = (projectId, id) =>
+  request(projectId, `/${encodeURIComponent(id)}`, { method: 'DELETE' })
 
-export const previewFunnel = (payload, filters, signal) =>
-  request('/preview', { method: 'POST', body: payload, filters, signal })
+export const duplicateFunnel = (projectId, id, filters) =>
+  request(projectId, `/${encodeURIComponent(id)}/duplicate`, { method: 'POST', filters })
+
+export const previewFunnel = (projectId, payload, filters, signal) =>
+  request(projectId, '/preview', { method: 'POST', body: payload, filters, signal })

@@ -1,23 +1,14 @@
 // src/hooks/useFunnels.js
 import { useCallback, useEffect, useState } from 'react'
-import { useProject } from '../context/ProjectContext'
 import * as api from '../services/funnelsService'
 
-// filters = { period, customRange, platform, device, selectedPersonas }
-export function useFunnels(filters) {
-  const { projectId } = useProject()
-
+export function useFunnels(projectId, filters) {
   const [funnels, setFunnels] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // filters is a new object every render, so key effects on its contents.
+  // filters is a new object every render, so key the effect on its contents.
   const filterKey = JSON.stringify(filters ?? {})
-
-  // Never show another project's funnels after switching project.
-  useEffect(() => {
-    setFunnels([])
-  }, [projectId])
 
   const load = useCallback(
     async (signal) => {
@@ -28,8 +19,8 @@ export function useFunnels(filters) {
       setLoading(true)
       setError('')
       try {
-        const data = await api.listFunnels(JSON.parse(filterKey), signal)
-        if (!signal?.aborted) setFunnels(data.funnels)
+        const data = await api.listFunnels(projectId, JSON.parse(filterKey), signal)
+        setFunnels(data.funnels)
       } catch (e) {
         if (e.name !== 'AbortError') setError(e.message)
       } finally {
@@ -48,37 +39,40 @@ export function useFunnels(filters) {
   // create / update throw so the builder modal can show the error inline.
   const create = useCallback(
     async (payload) => {
-      const { funnel } = await api.createFunnel(payload, JSON.parse(filterKey))
+      const { funnel } = await api.createFunnel(projectId, payload, JSON.parse(filterKey))
       setFunnels((prev) => [funnel, ...prev])
       return funnel
     },
-    [filterKey],
+    [projectId, filterKey],
   )
 
   const update = useCallback(
     async (id, payload) => {
-      const { funnel } = await api.updateFunnel(id, payload, JSON.parse(filterKey))
+      const { funnel } = await api.updateFunnel(projectId, id, payload, JSON.parse(filterKey))
       setFunnels((prev) => prev.map((f) => (f.id === id ? funnel : f)))
       return funnel
     },
-    [filterKey],
+    [projectId, filterKey],
   )
 
-  const remove = useCallback(async (id) => {
-    try {
-      await api.deleteFunnel(id)
-      setFunnels((prev) => prev.filter((f) => f.id !== id))
-      return true
-    } catch (e) {
-      setError(e.message)
-      return false
-    }
-  }, [])
+  const remove = useCallback(
+    async (id) => {
+      try {
+        await api.deleteFunnel(projectId, id)
+        setFunnels((prev) => prev.filter((f) => f.id !== id))
+        return true
+      } catch (e) {
+        setError(e.message)
+        return false
+      }
+    },
+    [projectId],
+  )
 
   const duplicate = useCallback(
     async (id) => {
       try {
-        const { funnel } = await api.duplicateFunnel(id, JSON.parse(filterKey))
+        const { funnel } = await api.duplicateFunnel(projectId, id, JSON.parse(filterKey))
         setFunnels((prev) => [funnel, ...prev])
         return funnel
       } catch (e) {
@@ -86,30 +80,28 @@ export function useFunnels(filters) {
         return null
       }
     },
-    [filterKey],
+    [projectId, filterKey],
   )
 
   return { funnels, loading, error, create, update, remove, duplicate, reload: load }
 }
 
-// Event names from the project's event catalog (feeds the step picker).
-export function useTrackedEvents() {
-  const { projectId } = useProject()
+// Event names tracked for this project (feeds the step picker).
+export function useTrackedEvents(projectId) {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!projectId) {
-      setEvents([])
       setLoading(false)
       return undefined
     }
     const controller = new AbortController()
     setLoading(true)
     api
-      .listTrackedEvents(controller.signal)
+      .listTrackedEvents(projectId, controller.signal)
       .then((data) => setEvents(data.events))
-      .catch(() => {}) // picker stays empty; the tab surfaces list errors
+      .catch(() => {}) // picker just stays empty; the tab surfaces list errors
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false)
       })

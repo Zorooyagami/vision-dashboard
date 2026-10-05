@@ -11,7 +11,6 @@ export function useRevenueTrend({ period, customRange, platform, selectedPersona
     let cancelled = false;
     setLoading(true);
     setError(null);
-console.log("period", period)
     fetchRevenueTrend({ period, customRange, platform, selectedPersonas, device })
       .then((res) => {
         if (!cancelled) setData(res.data);

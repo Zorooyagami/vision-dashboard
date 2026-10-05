@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { apiFetch } from './../services/apiClient'
 
-
 // ---------------------------------------------------------------------
 // Query builder
 // ---------------------------------------------------------------------
@@ -33,7 +32,7 @@ function buildQuery(filters = {}, extra = {}) {
 // We handle both so the hook never throws "HTTP undefined".
 // ---------------------------------------------------------------------
 async function getJson(path) {
-  const url = path
+  const url = path // apiFetch prepends the API base URL and injects the project id
   let res
 
   try {

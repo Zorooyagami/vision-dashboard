@@ -7,7 +7,7 @@ import { fetchPersonaLeaderboard } from '../services/personaLeaderboardApi'
 export function usePersonaLeaderboard(filters) {
   const {
     data,
-    loadingPersonaLeaderboard,
+    loading: loadingPersonaLeaderboard,
     error,
   } = useAsync(
     () => fetchPersonaLeaderboard(filters),
@@ -37,16 +37,11 @@ export function usePersonaLeaderboard(filters) {
     return data.map((item) => ({
       id: item.id,
       revenue: formatRevenue(item.revenue),
-
-      // Using pct for now
-      conv: `${Number(item.pct || 0).toFixed(1)}%`,
-
-      // Temporary until backend sends trend/comparison data
-      dir: item.revenue > 0 ? 'up' : 'flat',
+      share: `${Number(item.pct || 0).toFixed(1)}%`,
+      orders: Number(item.orders || 0),
     }))
   }, [data])
 
-  console.log('rows hooks', rows)
 
   return {
     rows,

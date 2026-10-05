@@ -17,7 +17,7 @@ export function useEvents(filters) {
     .then(setEvents)
     .catch((err) => setError(err.message))
     .finally(() => setLoading(false));
-}, [filters.period, filters.customRange, filters.platform, JSON.stringify(filters.selectedPersonas), filters.device]);
+}, [projectId, filters.period, filters.customRange, filters.platform, JSON.stringify(filters.selectedPersonas), filters.device]);
 
   useEffect(() => { load(); }, [load]);
 

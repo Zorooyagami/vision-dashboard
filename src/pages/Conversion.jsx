@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PERSONAS } from '../data/personas'
 import { useFilters } from '../context/FiltersContext'
-import { useFunnel } from '../hooks/useFunnels'
+import { useFunnel } from '../hooks/useFunnel'
 import { useJourneyPaths } from '../hooks/useJourneyPaths'
 import { usePathDetail } from '../hooks/usePathDetail'
 
