@@ -62,7 +62,7 @@ function NewDecisionModal({ onClose, onSave, prefill }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(15,17,23,0.6)', backdropFilter: 'blur(4px)' }}>
       <div role="dialog" aria-modal="true" aria-label="Log New Decision" className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
         <div className="px-6 py-5 border-b" style={{ borderColor: '#E2E8F0' }}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="font-bold text-slate-900">Log New Decision</h3>
               <p className="text-xs text-slate-400 mt-0.5">Track the business impact of your decisions</p>
@@ -232,10 +232,10 @@ export default function DecisionsPage({ decisions, onAddDecision, prefill }) {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="space-y-4 p-4 sm:p-6">
       {showModal && <NewDecisionModal onClose={() => setShowModal(false)} onSave={onAddDecision} prefill={prefill} />}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-bold text-slate-900">Decision Tracking</h2>
           <p className="text-xs text-slate-400 mt-0.5">Log decisions and auto-track before/after impact</p>
@@ -250,7 +250,7 @@ export default function DecisionsPage({ decisions, onAddDecision, prefill }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {([
           ['Total', String(counts.total), '#0F172A'],
           ['Successful', String(counts.success), '#059669'],

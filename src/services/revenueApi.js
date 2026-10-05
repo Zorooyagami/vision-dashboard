@@ -1,6 +1,6 @@
-// src/services/revenueApi.js
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
-const API_BASE = `${API_BASE_URL}/api/admin`
+import { apiFetch } from './apiClient'
+
+const API_BASE = '/api/admin'
 
 function buildParams({ period, customRange, platform, device }) {
   const params = new URLSearchParams()
@@ -15,15 +15,11 @@ function buildParams({ period, customRange, platform, device }) {
 }
 
 export async function fetchRevenueBreakdown(filters) {
-  const res = await fetch(`${API_BASE}/revenue/breakdown?${buildParams(filters)}`)
-  if (!res.ok) throw new Error('Failed to fetch revenue breakdown')
-  const data = await res.json()
-  return data.rows
+  const data = await apiFetch(`${API_BASE}/revenue/breakdown?${buildParams(filters)}`)
+  return data?.rows || []
 }
 
 export async function fetchStackedRevenue(filters) {
-  const res = await fetch(`${API_BASE}/revenue/stacked?${buildParams(filters)}`)
-  if (!res.ok) throw new Error('Failed to fetch stacked revenue')
-  const data = await res.json()
-  return data.monthly
+  const data = await apiFetch(`${API_BASE}/revenue/stacked?${buildParams(filters)}`)
+  return data?.monthly || {}
 }

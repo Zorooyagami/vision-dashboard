@@ -1,40 +1,7 @@
 // src/components/projects/CreateProject.jsx
 import { useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  'http://localhost:4000'
-
-const BASE =
-  `${API_BASE_URL}/api/admin/projects`
-
-/* =========================================================
-   API
-========================================================= */
-
-export async function createProject(payload) {
-  const response = await fetch(BASE, {
-    method: 'POST',
-
-    headers: {
-      'Content-Type': 'application/json',
-    },
-
-    body: JSON.stringify(payload),
-  })
-
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(
-      data?.error ||
-        'Failed to create project'
-    )
-  }
-
-  return data.project
-}
+import { createProject } from '../../services/projectsApi'
 
 /* =========================================================
    MAIN COMPONENT
@@ -70,7 +37,7 @@ export default function CreateProject({
   const [copied, setCopied] =
     useState(false)
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
   /* =======================================================
      NORMALIZE WEBSITE
@@ -179,10 +146,7 @@ export default function CreateProject({
             },
           })
 
-        console.log(
-          '[CreateProject] created:',
-          project
-        )
+
 
         setCreatedProject(
           project
@@ -245,7 +209,7 @@ export default function CreateProject({
 
   if (step === 'install') {
     return (
-      <div className="mx-auto w-full max-w-3xl">
+      <div className="mx-auto w-full max-w-3xl p-4 sm:p-6">
 
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
@@ -467,7 +431,7 @@ export default function CreateProject({
   ======================================================= */
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full max-w-3xl p-4 sm:p-6">
 
       {/* PAGE HEADER */}
 

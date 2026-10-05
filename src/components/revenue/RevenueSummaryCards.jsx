@@ -6,7 +6,7 @@ export default function RevenueSummaryCards({ totalRev, totalOrders, avgAov, top
   const topPersonaObj = topPersona ? { id: topPersona.id } : null
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(15,23,42,0.06)' }}>
         <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Total Revenue</p>
         <p className="text-2xl font-black text-slate-900 mt-1">{fmtRev(totalRev)}</p>

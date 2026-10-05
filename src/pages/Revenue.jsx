@@ -19,7 +19,7 @@ export default function RevenuePage() {
   const topPersona = [...filteredRows].sort((a, b) => b.revenue - a.revenue)[0] || null
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="space-y-4 p-4 sm:p-6">
       <div>
         <h2 className="text-base font-bold text-slate-900">Revenue by Persona</h2>
         <p className="text-xs text-slate-400 mt-0.5">

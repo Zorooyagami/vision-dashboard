@@ -44,7 +44,7 @@ function EventDetailPanel({ event, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-end pointer-events-none">
       <div
-        className="pointer-events-auto w-[400px] h-full bg-white border-l flex flex-col"
+        className="pointer-events-auto h-full w-full bg-white border-l flex flex-col sm:w-[400px]"
         style={{ borderColor: '#E2E8F0', boxShadow: '-4px 0 24px rgba(15,23,42,0.08)' }}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: '#F1F5F9' }}>

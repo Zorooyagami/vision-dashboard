@@ -1,6 +1,6 @@
-// src/services/personaLeaderboardApi.js
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
-const API_BASE = `${API_BASE_URL}/api/admin`
+import { apiFetch } from './apiClient'
+
+const API_BASE = '/api/admin'
 
 export async function fetchPersonaLeaderboard({ period, customRange, platform, device } = {}) {
   const params = new URLSearchParams()
@@ -11,9 +11,7 @@ export async function fetchPersonaLeaderboard({ period, customRange, platform, d
     params.set('from', customRange.from)
     params.set('to', customRange.to)
   }
-  const res = await fetch(`${API_BASE}/revenue/breakdown?${params.toString()}`)
-  if (!res.ok) throw new Error('Failed to fetch leaderboard')
-  const data = await res.json()
-  console.log("data", data)
-  return data.rows
+
+  const data = await apiFetch(`${API_BASE}/revenue/breakdown?${params.toString()}`)
+  return data?.rows || []
 }

@@ -256,10 +256,10 @@ export default function AlertsPage({ onNavigateSettings, onNavigateDecisions }) 
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="space-y-4 p-4 sm:p-6">
       {detailAlert && <AlertDetailModal alert={detailAlert} onClose={() => setDetailAlert(null)} onCreateDecision={handleCreateDecision} onSnooze={snooze} />}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-bold text-slate-900">Alerts & Insights</h2>
           <p className="text-xs text-slate-400 mt-0.5">Auto-detected anomalies across personas and metrics</p>
@@ -269,7 +269,7 @@ export default function AlertsPage({ onNavigateSettings, onNavigateDecisions }) 
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {Object.entries(counts).map(([sev, count]) => {
           const s = SEVERITY[sev]
           return (

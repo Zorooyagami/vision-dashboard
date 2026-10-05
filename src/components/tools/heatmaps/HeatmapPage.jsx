@@ -1,31 +1,35 @@
 import { useEffect, useMemo, useState } from 'react'
 import PersonaChip from '../../PersonaChip'
 import HeatmapViewer from './HeatmapViewer'
+import { apiFetch } from '../../../services/apiClient'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-const API_BASE = `http://localhost:4000/api/events/heatmaps`
+const API_BASE = '/api/events/heatmaps'
 
 const PAGES = [
   {
     id: 'home',
     label: 'Homepage',
     pageId: 0,
+    path: '/',
   },
   {
     id: 'products',
     label: 'Products (PLP)',
     pageId: 1,
+    path: '/products',
   },
   {
     id: 'product',
     label: 'Product Detail (PDP)',
     pageId: 2,
+    path: '/product',
   }
 ]
 
 const SCREENSHOTS = {
   home: {
     web: '/heatmap-snapshot/home-desktop.png',
+    app: '/heatmap-snapshot/home-mobile.png',
   },
 
   products: {
@@ -51,7 +55,6 @@ export default function HeatmapPage({
   const [hmPlatform, setHmPlatform] = useState(
     platform === 'app' ? 'app' : 'web'
   )
-
   const [events, setEvents] = useState([])
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState(null)
@@ -63,14 +66,7 @@ export default function HeatmapPage({
     .sort()
     .join(',')
 
-  /*
-   * For now we only have:
-   *
-   * Product Detail
-   * Desktop/Web
-   *
-   * As you add screenshots later, just extend SCREENSHOTS.
-   */
+  // A page/surface is available when a matching snapshot has been configured.
   const screenshot = SCREENSHOTS?.[page]?.[hmPlatform]
 
   const isSupported = Boolean(screenshot)
@@ -129,15 +125,7 @@ export default function HeatmapPage({
           `${API_BASE}/${currentPage.pageId}` +
           `?${params.toString()}`
 
-        const response = await fetch(url)
-
-        if (!response.ok) {
-          throw new Error(
-            `Heatmap request failed with status ${response.status}`
-          )
-        }
-
-        const data = await response.json()
+        const data = await apiFetch(url)
 
         if (cancelled) return
 
@@ -250,7 +238,8 @@ export default function HeatmapPage({
           shrink-0
           border-b
           bg-white
-          px-6
+          px-3
+          sm:px-6
           py-3
           flex
           items-center
@@ -262,7 +251,7 @@ export default function HeatmapPage({
         }}
       >
         {/* PAGE */}
-
+{hmPlatform}
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-slate-500">
             Page
@@ -319,7 +308,7 @@ export default function HeatmapPage({
               borderColor: '#E2E8F0',
             }}
           >
-            {['web', 'app'].map((item) => (
+            {['web'].map((item) => (
               <button
                 key={item}
                 type="button"
@@ -428,13 +417,13 @@ export default function HeatmapPage({
           CONTENT
       ========================================================= */}
 
-      <div className="flex flex-1 min-h-0 overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden xl:flex-row">
 
         {/* =======================================================
             HEATMAP AREA
         ======================================================= */}
 
-        <div className="flex-1 overflow-y-auto bg-slate-50 p-6">
+        <div className="flex-1 overflow-y-auto bg-slate-50 p-3 sm:p-6">
 
           <div className="mx-auto max-w-[900px]">
 
@@ -479,8 +468,7 @@ export default function HeatmapPage({
                 </p>
 
                 <p className="mt-1 max-w-[340px] text-xs leading-5 text-slate-400">
-                  For now, the real heatmap is configured for
-                  Product Detail · Web · Desktop.
+                  A page snapshot has not been configured for this page and surface yet.
                 </p>
 
                 <button
@@ -504,7 +492,7 @@ export default function HeatmapPage({
                     background: '#6366F1',
                   }}
                 >
-                  View Product Detail · Web
+                  View available desktop heatmap
                 </button>
               </div>
             )}
@@ -662,7 +650,7 @@ export default function HeatmapPage({
                       background: '#0F172A',
                     }}
                   >
-                    ecommerce.local/product-detail
+                    ecommerce.local{currentPage?.path || '/'}
                   </div>
 
                   <div className="text-[10px] font-semibold text-slate-400">
@@ -730,12 +718,15 @@ export default function HeatmapPage({
 
         <aside
           className="
-            w-60
+            w-full
             shrink-0
             overflow-y-auto
-            border-l
+            border-t
             bg-white
             p-4
+            xl:w-60
+            xl:border-l
+            xl:border-t-0
           "
           style={{
             borderColor: '#F1F5F9',

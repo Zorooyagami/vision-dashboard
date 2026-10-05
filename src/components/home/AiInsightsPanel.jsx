@@ -114,7 +114,6 @@ export default function AiInsightsPanel({
 
   // Load cached insights when dashboard mounts
   useEffect(() => {
-    console.log("window--", window)
     fetchInsights(window)
   }, [fetchInsights, window])
 

@@ -8,7 +8,7 @@ export default function ToolsPage({ platform, selectedPersonas }) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="bg-white border-b shrink-0" style={{ borderColor: '#E2E8F0' }}>
-        <div className="flex items-center px-6">
+        <div className="flex items-center overflow-x-auto px-3 sm:px-6">
           {([['heatmaps', 'Heatmaps'], ['replay', 'Session Replay']]).map(([id, label]) => (
             <button
               key={id}

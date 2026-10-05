@@ -5,6 +5,7 @@ import {
 } from 'react'
 
 import { useNavigate } from 'react-router-dom'
+import { useProject } from '../../context/ProjectContext'
 
 import {
   fetchProjects,
@@ -13,6 +14,7 @@ import {
 
 export default function ProjectsPage() {
   const navigate = useNavigate()
+  const { projectId: activeProjectId, selectProject, clearProject } = useProject()
 
   const [projects, setProjects] =
     useState([])
@@ -39,10 +41,21 @@ export default function ProjectsPage() {
         setLoading(true)
         setError('')
 
-        const result =
-          await fetchProjects()
+        const result = await fetchProjects()
 
         setProjects(result)
+
+        if (activeProjectId) {
+          const activeProject = result.find(
+            (project) => project.projectId === activeProjectId,
+          )
+
+          if (activeProject) {
+            selectProject(activeProject)
+          } else {
+            clearProject()
+          }
+        }
       } catch (err) {
         console.error(
           '[ProjectsPage] failed:',
@@ -56,7 +69,7 @@ export default function ProjectsPage() {
       } finally {
         setLoading(false)
       }
-    }, [])
+    }, [activeProjectId, clearProject, selectProject])
 
   useEffect(() => {
     loadProjects()
@@ -110,14 +123,13 @@ export default function ProjectsPage() {
           project.projectId
         )
 
-        setProjects(
-          (current) =>
-            current.filter(
-              (item) =>
-                item.projectId !==
-                project.projectId
-            )
+        setProjects((current) =>
+          current.filter((item) => item.projectId !== project.projectId),
         )
+
+        if (activeProjectId === project.projectId) {
+          clearProject()
+        }
       } catch (err) {
         console.error(
           '[ProjectsPage] delete failed:',
@@ -171,7 +183,7 @@ export default function ProjectsPage() {
   ======================================================= */
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 py-7">
+    <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-7">
 
       {/* ===================================================
           HEADER
@@ -332,14 +344,11 @@ export default function ProjectsPage() {
                   copiedId ===
                   project.projectId
                 }
+                active={activeProjectId === project.projectId}
                 onOpen={() => {
-                    localStorage.setItem(
-                        'vision_project_id',
-                        project.projectId
-                    )
-
-                    navigate('/home')
-                    }}
+                  selectProject(project)
+                  navigate('/home')
+                }}
                 onCopy={() =>
                   copyProjectId(
                     project.projectId
@@ -372,6 +381,7 @@ function ProjectCard({
   onOpen,
   onCopy,
   onDelete,
+  active = false,
 }) {
   const connected =
     Boolean(
@@ -385,21 +395,21 @@ function ProjectCard({
 
   return (
     <div
-      className="
+      className={`
         group
         flex
         flex-col
         overflow-hidden
         rounded-2xl
         border
-        border-slate-200
         bg-white
         shadow-sm
         transition
         hover:-translate-y-0.5
         hover:border-indigo-200
         hover:shadow-md
-      "
+        ${active ? 'border-indigo-300 ring-2 ring-indigo-100' : 'border-slate-200'}
+      `}
     >
 
       {/* TOP */}
@@ -472,14 +482,17 @@ function ProjectCard({
 
           </div>
 
-          <StatusBadge
-            connected={
-              connected
-            }
-            status={
-              project.status
-            }
-          />
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <StatusBadge
+              connected={connected}
+              status={project.status}
+            />
+            {active && (
+              <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-indigo-600">
+                Active
+              </span>
+            )}
+          </div>
 
         </div>
 

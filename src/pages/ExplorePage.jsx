@@ -3,9 +3,12 @@ import EventsTab from '../components/explore/events/EventsTab'
 import FunnelsTab from '../components/explore/funnels/FunnelsTab'
 import QueryBuilderTab from '../components/explore/query/QueryBuilderTab'
 import JourneysTab from '../components/explore/journeys/JourneysTab'
+import UsersTab from '../components/explore/users/UsersTab'
+
 
 const TABS = [
   { id: 'events',   label: 'Events' },
+  { id: 'users',  label: 'Users' },
   { id: 'funnels',  label: 'Funnels' },
   { id: 'query',    label: 'Query Builder' },
   { id: 'journeys', label: 'Journeys' },
@@ -18,7 +21,7 @@ export default function ExplorePage({ platform, selectedPersonas }) {
     <div className="flex flex-col h-full overflow-hidden">
       {/* Sub-nav */}
       <div className="bg-white border-b shrink-0" style={{ borderColor: '#E2E8F0' }}>
-        <div className="flex items-center px-6 gap-0">
+        <div className="flex items-center gap-0 overflow-x-auto px-3 sm:px-6">
           {TABS.map(t => (
             <button
               key={t.id}
@@ -37,6 +40,7 @@ export default function ExplorePage({ platform, selectedPersonas }) {
 
       {/* Tab content */}
       {tab === 'events'   && <EventsTab />}
+      {tab === 'users'   && <UsersTab />}
       {tab === 'funnels'  && <FunnelsTab />}
       {tab === 'query'    && <QueryBuilderTab />}
       {tab === 'journeys' && <JourneysTab selectedPersonas={selectedPersonas} />}

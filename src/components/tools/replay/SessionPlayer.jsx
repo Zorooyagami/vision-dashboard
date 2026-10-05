@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import 'rrweb-player/dist/style.css'
+import { apiRequest } from '../../../services/apiClient'
+
+const API_BASE = '/api/record'
 
 export default function SessionPlayer({ session, onClose }) {
   const containerRef = useRef(null)
@@ -7,11 +10,6 @@ export default function SessionPlayer({ session, onClose }) {
 
   const [status, setStatus] = useState('loading')
   const [shareOpen, setShareOpen] = useState(false)
-
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
-
-  const API_BASE = `${API_BASE_URL}/api/record`
 
   useEffect(() => {
     let cancelled = false
@@ -22,7 +20,7 @@ export default function SessionPlayer({ session, onClose }) {
 
         const [{ default: rrwebPlayer }, response] = await Promise.all([
           import('rrweb-player'),
-          fetch(`${API_BASE}/${session.sessionId}`),
+          apiRequest(`${API_BASE}/${encodeURIComponent(session.sessionId)}`),
         ])
 
         if (!response.ok) {
@@ -30,27 +28,6 @@ export default function SessionPlayer({ session, onClose }) {
         }
 
         const { events } = await response.json()
-const metaEvents = events.filter(
-  (event) =>
-    event?.data &&
-    typeof event.data.width === 'number' &&
-    typeof event.data.height === 'number'
-)
-
-console.log(
-  '[rrweb] recorded viewport events:',
-  metaEvents.map((event) => ({
-    type: event.type,
-    width: event.data.width,
-    height: event.data.height,
-    timestamp: event.timestamp,
-  }))
-)
-
-console.log('[rrweb] replay container:', {
-  width: containerRef.current?.clientWidth,
-  height: containerRef.current?.clientHeight,
-})
         if (cancelled) return
 
         if (!events?.length) {
@@ -64,17 +41,12 @@ console.log('[rrweb] replay container:', {
 
           const rect = containerRef.current.getBoundingClientRect()
 
-          console.log('[SessionPlayer] container size:', {
-            width: rect.width,
-            height: rect.height,
-          })
-
-          const width = Math.max(Math.floor(rect.width), 600)
+          const width = Math.max(Math.floor(rect.width), 320)
 
           // Leave room for rrweb controls
           const height = Math.max(
             Math.floor(rect.height - 70),
-            400
+            360
           )
 
           playerRef.current?.$destroy?.()
@@ -113,7 +85,7 @@ console.log('[rrweb] replay container:', {
       playerRef.current?.$destroy?.()
       playerRef.current = null
     }
-  }, [session.sessionId, API_BASE])
+  }, [session.sessionId])
 
   return (
     <>

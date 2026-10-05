@@ -58,48 +58,48 @@ const nodeColor = (name) =>
  *                                  Purchase
  */
 
+const NODE_W = 130
+const NODE_H = 52
+
+const SVG_W = 860
+const SVG_H = 700
+
 const NODE_LAYOUT = {
   PLP: {
-    x: 60,
-    y: 220,
+    x: 55,
+    y: 195,
   },
 
   PDP: {
-    x: 315,
-    y: 55,
+    x: 285,
+    y: 40,
   },
 
   'Add to Cart': {
-    x: 315,
-    y: 375,
+    x: 285,
+    y: 335,
   },
 
   Cart: {
-    x: 610,
-    y: 220,
+    x: 570,
+    y: 195,
   },
 
   Checkout: {
-    x: 610,
-    y: 400,
+    x: 570,
+    y: 335,
   },
 
   Shipping: {
-    x: 610,
-    y: 565,
+    x: 570,
+    y: 475,
   },
 
   Purchase: {
-    x: 610,
-    y: 730,
+    x: 570,
+    y: 615,
   },
 }
-
-const NODE_W = 155
-const NODE_H = 60
-
-const SVG_W = 920
-const SVG_H = 870
 
 /* =========================================================
    COMPONENT
@@ -242,7 +242,7 @@ function JourneysTab() {
       Math.sqrt(users || 0) /
       Math.sqrt(maxEdgeUsers)
 
-    return Math.max(1.5, ratio * 11)
+    return Math.max(1.2, ratio * 8)
   }
 
   const getPathId = (edge, index) =>
@@ -293,12 +293,12 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx + 70} ${sy - 5},
-            ${tx - 65} ${ty + 20},
+          C ${sx + 60} ${sy - 5},
+            ${tx - 55} ${ty + 18},
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: (sy + ty) / 2 - 12,
+        labelY: (sy + ty) / 2 - 10,
       }
     }
 
@@ -319,11 +319,11 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx - 35} ${sy + 80},
-            ${tx - 35} ${ty - 80},
+          C ${sx - 30} ${sy + 65},
+            ${tx - 30} ${ty - 65},
             ${tx} ${ty}
         `,
-        labelX: sx - 48,
+        labelX: sx - 42,
         labelY: (sy + ty) / 2,
       }
     }
@@ -345,12 +345,12 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx + 120} ${sy},
-            ${tx - 110} ${ty - 65},
+          C ${sx + 100} ${sy},
+            ${tx - 95} ${ty - 55},
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: (sy + ty) / 2 - 28,
+        labelY: (sy + ty) / 2 - 24,
       }
     }
 
@@ -371,12 +371,12 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx + 70} ${sy + 20},
-            ${tx - 70} ${ty - 20},
+          C ${sx + 60} ${sy + 18},
+            ${tx - 60} ${ty - 18},
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: (sy + ty) / 2 + 18,
+        labelY: (sy + ty) / 2 + 16,
       }
     }
 
@@ -396,17 +396,17 @@ function JourneysTab() {
       const tx = target.x
       const ty = targetCenter.y
 
-      const routeY = 185
+      const routeY = 165
 
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx + 100} ${routeY},
-            ${tx - 100} ${routeY},
+          C ${sx + 90} ${routeY},
+            ${tx - 90} ${routeY},
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: routeY - 10,
+        labelY: routeY - 8,
       }
     }
 
@@ -427,12 +427,12 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx + 100} ${sy},
-            ${tx - 100} ${ty + 55},
+          C ${sx + 90} ${sy},
+            ${tx - 90} ${ty + 45},
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: (sy + ty) / 2 + 25,
+        labelY: (sy + ty) / 2 + 22,
       }
     }
 
@@ -453,11 +453,11 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx} ${sy + 55},
-            ${tx} ${ty - 55},
+          C ${sx} ${sy + 45},
+            ${tx} ${ty - 45},
             ${tx} ${ty}
         `,
-        labelX: sx + 45,
+        labelX: sx + 40,
         labelY: (sy + ty) / 2,
       }
     }
@@ -479,11 +479,11 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx} ${sy + 50},
-            ${tx} ${ty - 50},
+          C ${sx} ${sy + 40},
+            ${tx} ${ty - 40},
             ${tx} ${ty}
         `,
-        labelX: sx + 45,
+        labelX: sx + 40,
         labelY: (sy + ty) / 2,
       }
     }
@@ -505,11 +505,11 @@ function JourneysTab() {
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx} ${sy + 50},
-            ${tx} ${ty - 50},
+          C ${sx} ${sy + 40},
+            ${tx} ${ty - 40},
             ${tx} ${ty}
         `,
-        labelX: sx + 45,
+        labelX: sx + 40,
         labelY: (sy + ty) / 2,
       }
     }
@@ -579,7 +579,7 @@ function JourneysTab() {
       const tx = target.x + NODE_W
       const ty = targetCenter.y
 
-      const outerX = sx + 70
+      const outerX = sx + 60
 
       return {
         d: `
@@ -607,17 +607,17 @@ function JourneysTab() {
       const tx = target.x + NODE_W / 2
       const ty = target.y + NODE_H
 
-      const routeY = 335
+      const routeY = 300
 
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx - 80} ${routeY},
-            ${tx + 80} ${routeY},
+          C ${sx - 70} ${routeY},
+            ${tx + 70} ${routeY},
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: routeY + 18,
+        labelY: routeY + 16,
       }
     }
 
@@ -635,18 +635,18 @@ function JourneysTab() {
       const tx = targetCenter.x
       const ty = target.y
 
-      const outerX = 25
-      const upperY = 30
+      const outerX = 22
+      const upperY = 24
 
       return {
         d: `
           M ${sx} ${sy}
           C ${outerX} ${upperY},
-            ${outerX} ${ty - 45},
+            ${outerX} ${ty - 40},
             ${tx} ${ty}
         `,
-        labelX: 85,
-        labelY: 75,
+        labelX: 75,
+        labelY: 65,
       }
     }
 
@@ -664,7 +664,7 @@ function JourneysTab() {
       const tx = targetCenter.x
       const ty = target.y + NODE_H
 
-      const routeY = 335
+      const routeY = 300
 
       return {
         d: `
@@ -674,7 +674,7 @@ function JourneysTab() {
             ${tx} ${ty}
         `,
         labelX: (sx + tx) / 2,
-        labelY: routeY + 18,
+        labelY: routeY + 16,
       }
     }
 
@@ -692,7 +692,7 @@ function JourneysTab() {
       const tx = target.x + NODE_W
       const ty = targetCenter.y
 
-      const outerX = sx + 85
+      const outerX = sx + 70
 
       return {
         d: `
@@ -720,18 +720,18 @@ function JourneysTab() {
       const tx = targetCenter.x
       const ty = target.y + NODE_H
 
-      const outerX = 20
-      const bottomY = 510
+      const outerX = 18
+      const bottomY = 408
 
       return {
         d: `
           M ${sx} ${sy}
           C ${outerX} ${bottomY},
-            ${outerX} ${ty + 100},
+            ${outerX} ${ty + 80},
             ${tx} ${ty}
         `,
-        labelX: 55,
-        labelY: 455,
+        labelX: 50,
+        labelY: 365,
       }
     }
 
@@ -749,21 +749,21 @@ function JourneysTab() {
       const tx = targetCenter.x
       const ty = target.y + NODE_H
 
-      const outerX = 18
-      const bottomY = 825
+      const outerX = 15
+      const bottomY = 660
 
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx - 180} ${bottomY},
+          C ${sx - 150} ${bottomY},
             ${outerX} ${bottomY},
-            ${outerX} ${ty + 120}
-          C ${outerX} ${ty + 60},
-            ${tx - 70} ${ty},
+            ${outerX} ${ty + 100}
+          C ${outerX} ${ty + 50},
+            ${tx - 60} ${ty},
             ${tx} ${ty}
         `,
-        labelX: 180,
-        labelY: 820,
+        labelX: 155,
+        labelY: 655,
       }
     }
 
@@ -781,21 +781,21 @@ function JourneysTab() {
       const tx = targetCenter.x
       const ty = target.y + NODE_H
 
-      const outerX = 265
-      const bottomY = 805
+      const outerX = 225
+      const bottomY = 645
 
       return {
         d: `
           M ${sx} ${sy}
-          C ${sx - 140} ${bottomY},
+          C ${sx - 115} ${bottomY},
             ${outerX} ${bottomY},
-            ${outerX} ${ty + 120}
-          C ${outerX} ${ty + 50},
-            ${tx - 30} ${ty},
+            ${outerX} ${ty + 100}
+          C ${outerX} ${ty + 45},
+            ${tx - 25} ${ty},
             ${tx} ${ty}
         `,
-        labelX: 350,
-        labelY: 790,
+        labelX: 300,
+        labelY: 632,
       }
     }
 
@@ -819,10 +819,10 @@ function JourneysTab() {
       Math.abs(fromIndex - toIndex)
 
     const curveY = Math.max(
-      15,
+      12,
       Math.min(source.y, target.y) -
-        45 -
-        distance * 12
+        38 -
+        distance * 10
     )
 
     return {
@@ -833,7 +833,7 @@ function JourneysTab() {
           ${tx} ${ty}
       `,
       labelX: (sx + tx) / 2,
-      labelY: curveY - 7,
+      labelY: curveY - 6,
     }
   }
 
@@ -879,38 +879,38 @@ function JourneysTab() {
 
     const EXIT_LAYOUT = {
       PLP: {
-        x: 100,
-        y: 345,
-      },
-
-      PDP: {
-        x: 525,
-        y: 115,
-      },
-
-      'Add to Cart': {
-        x: 390,
-        y: 500,
-      },
-
-      Cart: {
-        x: 850,
+        x: 90,
         y: 300,
       },
 
+      PDP: {
+        x: 460,
+        y: 95,
+      },
+
+      'Add to Cart': {
+        x: 350,
+        y: 440,
+      },
+
+      Cart: {
+        x: 780,
+        y: 265,
+      },
+
       Checkout: {
-        x: 850,
-        y: 470,
+        x: 780,
+        y: 400,
       },
 
       Shipping: {
-        x: 850,
-        y: 630,
+        x: 780,
+        y: 535,
       },
 
       Purchase: {
-        x: 850,
-        y: 790,
+        x: 780,
+        y: 665,
       },
     }
 
@@ -1016,7 +1016,7 @@ function JourneysTab() {
               ? nodeColor(edge.to)
               : isBackward
                 ? '#94A3B8'
-                : '#CBD5E1'
+                : '#C7D2DB'
           }
           strokeWidth={
             isHovered
@@ -1025,16 +1025,17 @@ function JourneysTab() {
           }
           strokeOpacity={
             isHovered
-              ? 0.9
+              ? 1
               : isBackward
-                ? 0.55
-                : 0.58
+                ? 0.5
+                : 0.55
           }
           strokeDasharray={
             isBackward
               ? '6 5'
               : undefined
           }
+          strokeLinecap="round"
           pointerEvents="none"
           style={{
             transition:
@@ -1048,17 +1049,26 @@ function JourneysTab() {
           <g pointerEvents="none">
 
             <rect
-              x={path.labelX - 70}
-              y={path.labelY - 20}
-              width="140"
-              height="30"
-              rx="7"
+              x={path.labelX - 62}
+              y={path.labelY - 22}
+              width="124"
+              height="28"
+              rx="8"
               fill="#0F172A"
+              opacity="0.96"
+            />
+
+            <path
+              d={`M ${path.labelX - 5} ${path.labelY + 6}
+                  L ${path.labelX} ${path.labelY + 11}
+                  L ${path.labelX + 5} ${path.labelY + 6} Z`}
+              fill="#0F172A"
+              opacity="0.96"
             />
 
             <text
               x={path.labelX}
-              y={path.labelY}
+              y={path.labelY - 3}
               textAnchor="middle"
               fontSize="10"
               fontWeight="700"
@@ -1128,7 +1138,7 @@ function JourneysTab() {
           stroke={
             isHovered
               ? '#64748B'
-              : '#CBD5E1'
+              : '#C7D2DB'
           }
           strokeWidth={
             isHovered
@@ -1138,6 +1148,7 @@ function JourneysTab() {
           strokeOpacity={
             isHovered ? 0.85 : 0.45
           }
+          strokeLinecap="round"
           pointerEvents="none"
         />
 
@@ -1146,13 +1157,13 @@ function JourneysTab() {
         <circle
           cx={path.exitX}
           cy={path.exitY}
-          r="6"
+          r="5"
           fill="#94A3B8"
         />
 
         <text
           x={path.exitX}
-          y={path.exitY + 20}
+          y={path.exitY + 18}
           textAnchor="middle"
           fontSize="9"
           fontWeight="600"
@@ -1168,16 +1179,25 @@ function JourneysTab() {
 
             <rect
               x={path.labelX - 68}
-              y={path.labelY - 20}
+              y={path.labelY - 22}
               width="136"
-              height="30"
-              rx="7"
+              height="28"
+              rx="8"
               fill="#0F172A"
+              opacity="0.96"
+            />
+
+            <path
+              d={`M ${path.labelX - 5} ${path.labelY + 6}
+                  L ${path.labelX} ${path.labelY + 11}
+                  L ${path.labelX + 5} ${path.labelY + 6} Z`}
+              fill="#0F172A"
+              opacity="0.96"
             />
 
             <text
               x={path.labelX}
-              y={path.labelY}
+              y={path.labelY - 3}
               textAnchor="middle"
               fontSize="10"
               fontWeight="700"
@@ -1199,7 +1219,7 @@ function JourneysTab() {
   ======================================================= */
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
 
       {/* ==================================================
           PERSONA FILTER
@@ -1275,7 +1295,7 @@ function JourneysTab() {
       ================================================== */}
 
       <div
-        className="bg-white rounded-2xl p-6"
+        className="bg-white rounded-2xl p-4 sm:p-5"
         style={{
           boxShadow:
             '0 1px 3px rgba(15,23,42,0.06)',
@@ -1286,17 +1306,17 @@ function JourneysTab() {
             HEADER
         ================================================= */}
 
-        <div className="flex items-start justify-between gap-5 mb-5 flex-wrap">
+        <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
 
           {/* Title */}
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-sm font-bold text-slate-900">
               Customer Journey Flow
             </p>
 
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5 truncate">
 
               {totalSessions.toLocaleString()}{' '}
               total sessions
@@ -1306,13 +1326,13 @@ function JourneysTab() {
               </span>
 
               {trackingMode === 'forward' &&
-                'Forward progression & drop-offs'}
+                'Forward & drop-offs'}
 
               {trackingMode === 'backward' &&
-                'Backtracking behaviour'}
+                'Backtracking only'}
 
               {trackingMode === 'all' &&
-                'All journey transitions'}
+                'All transitions'}
 
             </p>
 
@@ -1320,14 +1340,14 @@ function JourneysTab() {
 
           {/* Controls */}
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 flex-wrap">
 
             {/* =============================================
                 TRACKING MODE TOGGLE
             ============================================= */}
 
             <div
-              className="flex items-center rounded-xl border p-1"
+              className="flex items-center rounded-lg border p-0.5"
               style={{
                 borderColor: '#E2E8F0',
                 background: '#F8FAFC',
@@ -1359,10 +1379,10 @@ function JourneysTab() {
                       setHoveredPath(null)
                     }}
                     className="
-                      px-3
-                      py-1.5
-                      rounded-lg
-                      text-xs
+                      px-2.5
+                      py-1
+                      rounded-md
+                      text-[11px]
                       font-semibold
                       transition-all
                     "
@@ -1376,7 +1396,7 @@ function JourneysTab() {
                         : '#94A3B8',
 
                       boxShadow: active
-                        ? '0 1px 3px rgba(15,23,42,0.10)'
+                        ? '0 1px 2px rgba(15,23,42,0.10)'
                         : 'none',
                     }}
                   >
@@ -1384,20 +1404,6 @@ function JourneysTab() {
                   </button>
                 )
               })}
-
-            </div>
-
-            {/* Helper */}
-
-            <div className="text-right">
-
-              <p className="text-xs text-slate-400">
-                Line thickness represents traffic
-              </p>
-
-              <p className="text-[10px] text-slate-300 mt-0.5">
-                Hover a path for details
-              </p>
 
             </div>
 
@@ -1456,213 +1462,221 @@ function JourneysTab() {
         {!loading &&
           !error &&
           validEdges.length > 0 && (
-            <div className="overflow-x-auto">
+            <div
+              className="w-full rounded-xl overflow-hidden"
+              style={{
+                background:
+                  'radial-gradient(circle at 1px 1px, #E2E8F0 1px, transparent 0)',
+                backgroundSize: '22px 22px',
+              }}
+            >
 
-              <div
+              <svg
+                viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+                preserveAspectRatio="xMidYMid meet"
                 style={{
-                  minWidth: SVG_W,
-                  display: 'flex',
-                  justifyContent: 'center',
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: 'calc(100vh - 280px)',
+                  display: 'block',
                 }}
               >
 
-                <svg
-                  width={SVG_W}
-                  height={SVG_H}
-                  viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-                  style={{
-                    overflow: 'visible',
-                  }}
-                >
+                {/* ========================================
+                    EDGES FIRST
 
-                  {/* ========================================
-                      EDGES FIRST
+                    Nodes render after paths so paths
+                    visually sit behind the cards.
+                ======================================== */}
 
-                      Nodes render after paths so paths
-                      visually sit behind the cards.
-                  ======================================== */}
+                {validEdges.map(
+                  (edge, index) =>
+                    edge.to === 'Exit'
+                      ? renderExitEdge(
+                          edge,
+                          index
+                        )
+                      : renderJourneyEdge(
+                          edge,
+                          index
+                        )
+                )}
 
-                  {validEdges.map(
-                    (edge, index) =>
-                      edge.to === 'Exit'
-                        ? renderExitEdge(
-                            edge,
-                            index
-                          )
-                        : renderJourneyEdge(
-                            edge,
-                            index
-                          )
-                  )}
+                {/* ========================================
+                    NODES
+                ======================================== */}
 
-                  {/* ========================================
-                      NODES
-                  ======================================== */}
+                {activeNodes.map(
+                  (name) => {
+                    const pos =
+                      NODE_LAYOUT[name]
 
-                  {activeNodes.map(
-                    (name) => {
-                      const pos =
-                        NODE_LAYOUT[name]
+                    if (!pos) return null
 
-                      if (!pos) return null
+                    const color =
+                      nodeColor(name)
 
-                      const color =
-                        nodeColor(name)
+                    const count =
+                      nodeCounts[name] || 0
 
-                      const count =
-                        nodeCounts[name] || 0
+                    return (
+                      <g
+                        key={name}
+                        style={{
+                          cursor: 'default',
+                        }}
+                      >
 
-                      return (
-                        <g key={name}>
+                        {/* Shadow */}
 
-                          {/* Shadow */}
+                        <rect
+                          x={pos.x + 1.5}
+                          y={pos.y + 2.5}
+                          width={NODE_W}
+                          height={NODE_H}
+                          rx="10"
+                          fill="#0F172A"
+                          opacity="0.06"
+                        />
 
-                          <rect
-                            x={pos.x + 2}
-                            y={pos.y + 3}
-                            width={NODE_W}
-                            height={NODE_H}
-                            rx="11"
-                            fill="#0F172A"
-                            opacity="0.04"
-                          />
+                        {/* Card */}
 
-                          {/* Card */}
+                        <rect
+                          x={pos.x}
+                          y={pos.y}
+                          width={NODE_W}
+                          height={NODE_H}
+                          rx="10"
+                          fill="#FFFFFF"
+                          stroke={color}
+                          strokeWidth="1.5"
+                        />
 
-                          <rect
-                            x={pos.x}
-                            y={pos.y}
-                            width={NODE_W}
-                            height={NODE_H}
-                            rx="11"
-                            fill="#FFFFFF"
-                            stroke={color}
-                            strokeWidth="1.5"
-                          />
+                        {/* Accent stripe */}
 
-                          {/* Category stripe */}
+                        <rect
+                          x={pos.x}
+                          y={pos.y + 8}
+                          width="3.5"
+                          height={NODE_H - 16}
+                          rx="2"
+                          fill={color}
+                        />
 
-                          <rect
-                            x={pos.x}
-                            y={pos.y}
-                            width="5"
-                            height={NODE_H}
-                            rx="2.5"
-                            fill={color}
-                          />
+                        {/* Name */}
 
-                          {/* Name */}
+                        <text
+                          x={pos.x + NODE_W / 2 + 2}
+                          y={pos.y + 22}
+                          textAnchor="middle"
+                          fontSize="10.5"
+                          fontWeight="700"
+                          fill={color}
+                          letterSpacing="0.2"
+                        >
+                          {name}
+                        </text>
 
-                          <text
-                            x={
-                              pos.x +
-                              NODE_W / 2
-                            }
-                            y={pos.y + 24}
-                            textAnchor="middle"
-                            fontSize="11"
-                            fontWeight="700"
-                            fill={color}
-                          >
-                            {name}
-                          </text>
+                        {/* Session count */}
 
-                          {/* Session count */}
+                        <text
+                          x={pos.x + NODE_W / 2 + 2}
+                          y={pos.y + 40}
+                          textAnchor="middle"
+                          fontSize="11"
+                          fontWeight="800"
+                          fill="#1E293B"
+                        >
+                          {fmtVol(count)}
+                        </text>
 
-                          <text
-                            x={
-                              pos.x +
-                              NODE_W / 2
-                            }
-                            y={pos.y + 44}
-                            textAnchor="middle"
-                            fontSize="11"
-                            fontWeight="700"
-                            fill="#334155"
-                          >
-                            {fmtVol(count)}
-                          </text>
+                      </g>
+                    )
+                  }
+                )}
 
-                        </g>
-                      )
-                    }
-                  )}
-
-                </svg>
-
-              </div>
+              </svg>
 
             </div>
           )}
 
-      </div>
+        {/* =================================================
+            LEGEND (inside card)
+        ================================================= */}
 
-      {/* ==================================================
-          LEGEND
-      ================================================== */}
+        <div
+          className="mt-4 pt-3 border-t flex items-center gap-5 flex-wrap"
+          style={{
+            borderColor: '#F1F5F9',
+          }}
+        >
 
-      <div className="flex items-center gap-6 px-1 flex-wrap">
+          {[
+            {
+              label: 'Browsing',
+              color: '#0D9488',
+            },
+            {
+              label: 'Cart',
+              color: '#D97706',
+            },
+            {
+              label: 'Checkout',
+              color: '#4338CA',
+            },
+            {
+              label: 'Purchase',
+              color: '#6366F1',
+            },
+            {
+              label: 'Exit',
+              color: '#94A3B8',
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center gap-1.5"
+            >
 
-        {[
-          {
-            label: 'Browsing',
-            color: '#0D9488',
-          },
-          {
-            label: 'Cart',
-            color: '#D97706',
-          },
-          {
-            label: 'Checkout',
-            color: '#4338CA',
-          },
-          {
-            label: 'Purchase',
-            color: '#6366F1',
-          },
-          {
-            label: 'Exit',
-            color: '#94A3B8',
-          },
-        ].map((item) => (
-          <div
-            key={item.label}
-            className="flex items-center gap-1.5"
-          >
+              <span
+                className="w-2 h-2 rounded-sm shrink-0"
+                style={{
+                  background: item.color,
+                }}
+              />
 
-            <span
-              className="w-2.5 h-2.5 rounded-sm shrink-0"
-              style={{
-                background: item.color,
-              }}
-            />
+              <span className="text-[11px] text-slate-500">
+                {item.label}
+              </span>
 
-            <span className="text-xs text-slate-500">
-              {item.label}
-            </span>
+            </div>
+          ))}
 
+          {/* Only show backtracking legend when relevant */}
+
+          {(trackingMode === 'backward' ||
+            trackingMode === 'all') && (
+            <div className="flex items-center gap-2 ml-auto">
+
+              <span
+                className="w-6 border-t border-dashed"
+                style={{
+                  borderColor: '#94A3B8',
+                }}
+              />
+
+              <span className="text-[11px] text-slate-500">
+                Backtracking
+              </span>
+
+            </div>
+          )}
+
+          <div className="text-[10px] text-slate-400 ml-auto">
+            Line thickness = traffic · Hover for details
           </div>
-        ))}
 
-        {/* Only show backtracking legend when relevant */}
-
-        {(trackingMode === 'backward' ||
-          trackingMode === 'all') && (
-          <div className="flex items-center gap-2 ml-2">
-
-            <span
-              className="w-7 border-t border-dashed"
-              style={{
-                borderColor: '#94A3B8',
-              }}
-            />
-
-            <span className="text-xs text-slate-500">
-              Backtracking
-            </span>
-
-          </div>
-        )}
+        </div>
 
       </div>
 

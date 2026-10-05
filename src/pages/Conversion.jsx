@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PERSONAS } from '../data/personas'
 import { useFilters } from '../context/FiltersContext'
-import { useFunnel } from '../hooks/useFunnel'
+import { useFunnel } from '../hooks/useFunnels'
 import { useJourneyPaths } from '../hooks/useJourneyPaths'
 import { usePathDetail } from '../hooks/usePathDetail'
 
@@ -168,7 +168,7 @@ export default function ConversionPage() {
    * -------------------------------------------------- */
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="space-y-5 p-4 sm:p-6">
 
       {/* ==================================================
           PAGE HEADER

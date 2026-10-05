@@ -25,7 +25,7 @@ const ALL_METRICS = [
 
 export default function MetricsPage({ platform, onNavigate }) {
   return (
-    <div className="p-6 space-y-5">
+    <div className="space-y-5 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-base font-bold text-slate-900">Metrics Library</h2>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PERSONAS } from '../data/personas'
 
 
@@ -26,13 +26,25 @@ export default function Topbar({
   onPersonasChange,
   title,
   period,
+  customRange,
   onPeriodChange,
+  showFilters = true,
+  projectId,
+  projectName,
+  onProjectClick,
+  onNavigatePath,
 }) {
   const [personaOpen, setPersonaOpen] = useState(false)
   const [dateOpen, setDateOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [customFrom, setCustomFrom] = useState('2026-07-01')
-  const [customTo, setCustomTo] = useState('2026-07-31')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [customFrom, setCustomFrom] = useState(customRange?.from || '')
+  const [customTo, setCustomTo] = useState(customRange?.to || '')
+
+  useEffect(() => {
+    setCustomFrom(customRange?.from || '')
+    setCustomTo(customRange?.to || '')
+  }, [customRange?.from, customRange?.to])
 
   const togglePersona = (id) => {
     onPersonasChange(
@@ -46,7 +58,9 @@ export default function Topbar({
   const activePreset = DATE_PRESETS.find(p => p.token === period)
   const dateLabel =
     period === 'custom'
-      ? `${formatDate(customFrom)} – ${formatDate(customTo)}`
+      ? customRange?.from && customRange?.to
+        ? `${formatDate(customRange.from)} – ${formatDate(customRange.to)}`
+        : 'Custom range'
       : activePreset?.display ?? 'Custom'
 
   const personaLabel =
@@ -56,13 +70,50 @@ export default function Topbar({
       ? PERSONAS.find(p => p.id === selectedPersonas[0])?.name ?? '1 Persona'
       : `${selectedPersonas.length} Personas`
 
+  const searchItems = [
+    { label: 'Overview', path: '/home' },
+    { label: 'Conversion Funnel', path: '/conversion' },
+    { label: 'Explore', path: '/explore' },
+    { label: 'Revenue by Persona', path: '/revenue' },
+    { label: 'Personas Explorer', path: '/personas' },
+    { label: 'Behavior', path: '/tools' },
+    { label: 'Decision Tracking', path: '/decisions' },
+    { label: 'Alerts & Insights', path: '/alerts' },
+    { label: 'Projects', path: '/projects' },
+    { label: 'Settings', path: '/settings' },
+  ]
+
+  const filteredSearchItems = searchItems.filter((item) =>
+    item.label.toLowerCase().includes(searchQuery.trim().toLowerCase()),
+  )
+
   return (
     <header
-      className="h-14 flex items-center px-6 gap-3 shrink-0 relative z-30"
+      className="min-h-14 flex flex-wrap items-center px-3 sm:px-6 py-2 gap-2 sm:gap-3 shrink-0 relative z-30"
       style={{ background: '#fff', borderBottom: '1px solid #E2E8F0' }}
     >
-      <h1 className="font-bold text-[15px] text-slate-900 tracking-tight mr-1 shrink-0">{title}</h1>
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+        <h1 className="truncate font-bold text-[15px] text-slate-900 tracking-tight shrink-0">{title}</h1>
 
+        {projectId && showFilters && (
+          <button
+            type="button"
+            onClick={onProjectClick}
+            className="hidden sm:flex min-w-0 max-w-[220px] items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50/70 px-2.5 py-1.5 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
+            title="Switch project"
+          >
+            <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+            <span className="truncate text-[11px] font-semibold text-indigo-700">
+              {projectName || projectId}
+            </span>
+            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {showFilters && (<>
       {/* ---------- Date range picker ---------- */}
       <div className="relative">
         <button
@@ -76,7 +127,7 @@ export default function Topbar({
           <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          {/* {dateLabel} */}
+          <span className="hidden sm:inline">{dateLabel}</span>
           <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
@@ -115,21 +166,21 @@ export default function Topbar({
                 </button>
               ))}
 
-              {/* <div className="border-t px-3 py-2.5" style={{ borderColor: '#F1F5F9' }}>
+              <div className="border-t px-3 py-2.5" style={{ borderColor: '#F1F5F9' }}>
                 <p className="text-[10px] font-semibold text-slate-400 tracking-widest mb-2">CUSTOM RANGE</p>
                 <div className="flex gap-2">
                   <input
                     type="date"
                     value={customFrom}
                     onChange={e => setCustomFrom(e.target.value)}
-                    className="flex-1 text-xs border rounded px-2 py-1 outline-none"
+                    className="min-w-0 flex-1 rounded border px-2 py-1.5 text-xs outline-none focus:border-indigo-400"
                     style={{ borderColor: '#E2E8F0' }}
                   />
                   <input
                     type="date"
                     value={customTo}
                     onChange={e => setCustomTo(e.target.value)}
-                    className="flex-1 text-xs border rounded px-2 py-1 outline-none"
+                    className="min-w-0 flex-1 rounded border px-2 py-1.5 text-xs outline-none focus:border-indigo-400"
                     style={{ borderColor: '#E2E8F0' }}
                   />
                 </div>
@@ -138,12 +189,13 @@ export default function Topbar({
                     onPeriodChange('custom', { from: customFrom, to: customTo })
                     setDateOpen(false)
                   }}
-                  className="mt-2 w-full text-xs font-bold text-white rounded-lg py-1.5"
+                  disabled={!customFrom || !customTo}
+                  className="mt-2 w-full rounded-lg py-1.5 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
                   style={{ background: '#6366F1' }}
                 >
                   Apply
                 </button>
-              </div> */}
+              </div>
             </div>
           </>
         )}
@@ -241,8 +293,31 @@ export default function Topbar({
         )}
       </div>
 
+      </>)}
+
       {/* ---------- Right side: search + avatar ---------- */}
-      <div className="ml-auto flex items-center gap-3 relative">
+      <div className="ml-auto flex items-center gap-2 sm:gap-3 relative">
+        {showFilters && projectId && (
+          <button
+            type="button"
+            onClick={onProjectClick}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-100 bg-indigo-50 text-[11px] font-bold text-indigo-600 sm:hidden"
+            title={projectName || projectId}
+            aria-label="Switch project"
+          >
+            {(projectName || projectId).charAt(0).toUpperCase()}
+          </button>
+        )}
+
+        {!showFilters && (
+          <button
+            type="button"
+            onClick={onProjectClick}
+            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
+          >
+            Projects
+          </button>
+        )}
         <div className="relative">
           <button
             onClick={() => setSearchOpen(o => !o)}
@@ -267,27 +342,29 @@ export default function Topbar({
                   <input
                     autoFocus
                     type="text"
-                    placeholder="Search screens, metrics…"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search screens…"
                     className="flex-1 text-sm outline-none"
                   />
                 </div>
-                {[
-                  'Home / Overview',
-                  'Personas Explorer',
-                  'Decision Tracking',
-                  'Revenue by Persona',
-                  'Alerts & Insights',
-                  'Conversion Funnel',
-                  'Settings',
-                ].map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setSearchOpen(false)}
-                    className="w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
-                  >
-                    {s}
-                  </button>
-                ))}
+                {filteredSearchItems.length > 0 ? (
+                  filteredSearchItems.map((item) => (
+                    <button
+                      key={item.path}
+                      onClick={() => {
+                        onNavigatePath?.(item.path)
+                        setSearchOpen(false)
+                        setSearchQuery('')
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                    >
+                      {item.label}
+                    </button>
+                  ))
+                ) : (
+                  <p className="px-3 py-4 text-center text-xs text-slate-400">No matching screens</p>
+                )}
               </div>
             </>
           )}

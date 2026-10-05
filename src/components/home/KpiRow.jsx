@@ -42,7 +42,7 @@ export default function KpiRow({ kpis, loading, error }) {
   if (error) {
     return (
       <div className="grid grid-cols-4 gap-4 kpi-grid">
-        <Card className="p-5 col-span-4 text-sm text-red-600">
+        <Card className="col-span-2 p-5 text-sm text-red-600 md:col-span-4">
           Couldn't load KPIs: {error.message ?? String(error)}
         </Card>
       </div>

@@ -8,7 +8,7 @@ export default function PersonaDistribution({
   donutData,
 }) {
   return (
-    <Card className="col-span-2 p-5">
+    <Card className="col-span-1 p-5 xl:col-span-2">
       <p className="text-sm font-bold text-slate-900 mb-0.5">Persona Distribution</p>
       <p className="text-xs text-slate-400 mb-4">
         {selectedCount > 0 ? `Filtered · ${selectedCount} persona(s)` : 'Current period · all platforms'}

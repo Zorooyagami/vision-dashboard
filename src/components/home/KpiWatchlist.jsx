@@ -180,7 +180,7 @@ export default function KpiWatchlist({ onViewAll }) {
   const available = KPI_OPTIONS.filter(k => !pinnedIds.includes(k.id))
 
   return (
-    <Card className="col-span-2 overflow-hidden">
+    <Card className="col-span-1 overflow-hidden xl:col-span-2">
       <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: '#F1F5F9' }}>
         <div>
           <p className="text-sm font-bold text-slate-900">KPIs to Track</p>

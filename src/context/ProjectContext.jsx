@@ -1,17 +1,90 @@
-// src/context/ProjectContext.jsx
-import { createContext, useContext, useState, useEffect } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import {
+  ACTIVE_PROJECT_ID_KEY,
+  ACTIVE_PROJECT_NAME_KEY,
+  clearActiveProject,
+  setActiveProject,
+} from '../services/apiClient'
 
 const ProjectContext = createContext(null)
 
-export function ProjectProvider({ children }) {
-  const [projectId, setProjectId] = useState(() => localStorage.getItem('vision_project_id') || null)
+function readStoredProject() {
+  return {
+    projectId: localStorage.getItem(ACTIVE_PROJECT_ID_KEY) || null,
+    projectName: localStorage.getItem(ACTIVE_PROJECT_NAME_KEY) || null,
+  }
+}
 
+export function ProjectProvider({ children }) {
+  const [activeProject, setActiveProjectState] = useState(readStoredProject)
+
+  const selectProject = useCallback((project) => {
+    if (!project?.projectId) return
+
+    setActiveProject(project)
+    setActiveProjectState({
+      projectId: project.projectId,
+      projectName: project.name || project.projectId,
+    })
+  }, [])
+
+  // Backward-compatible setter for any existing code that only knows an ID.
+  const setProjectId = useCallback((projectId) => {
+    if (!projectId) {
+      clearActiveProject()
+      setActiveProjectState({ projectId: null, projectName: null })
+      return
+    }
+
+    setActiveProject(projectId)
+    setActiveProjectState((current) => ({
+      projectId,
+      projectName:
+        current.projectId === projectId
+          ? current.projectName
+          : projectId,
+    }))
+  }, [])
+
+  const clearProject = useCallback(() => {
+    clearActiveProject()
+    setActiveProjectState({ projectId: null, projectName: null })
+  }, [])
+
+  // Keep multiple tabs/windows in sync.
   useEffect(() => {
-    if (projectId) localStorage.setItem('vision_project_id', projectId)
-  }, [projectId])
+    const onStorage = (event) => {
+      if (
+        event.key === ACTIVE_PROJECT_ID_KEY ||
+        event.key === ACTIVE_PROJECT_NAME_KEY
+      ) {
+        setActiveProjectState(readStoredProject())
+      }
+    }
+
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
+  const value = useMemo(
+    () => ({
+      ...activeProject,
+      setProjectId,
+      selectProject,
+      clearProject,
+    }),
+    [activeProject, setProjectId, selectProject, clearProject],
+  )
 
   return (
-    <ProjectContext.Provider value={{ projectId, setProjectId }}>
+    <ProjectContext.Provider value={value}>
       {children}
     </ProjectContext.Provider>
   )

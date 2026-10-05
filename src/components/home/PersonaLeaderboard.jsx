@@ -1,53 +1,50 @@
 import PersonaChip from '../PersonaChip'
 import { Card, ViewAllBtn } from './shared'
-import { fmtRev } from '../revenue/revenueUtils' // reuse the same formatter from RevenueTable
 
 export default function PersonaLeaderboard({ rows, loadingPersonaLeaderboard, onViewAll }) {
-  console.log("rows",rows)
   return (
-    <Card className="col-span-3 p-5">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-bold text-slate-900">Persona Leaderboard</p>
+    <Card className="col-span-1 p-5 xl:col-span-3">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-bold text-slate-900">Persona Leaderboard</p>
+          <p className="mt-0.5 text-[11px] text-slate-400">Revenue contribution for the selected period</p>
+        </div>
         <ViewAllBtn onClick={onViewAll} />
       </div>
 
       {loadingPersonaLeaderboard && (
-        <div className="flex items-center justify-center h-24 text-sm text-slate-400">Loading…</div>
+        <div className="flex h-24 items-center justify-center text-sm text-slate-400">Loading…</div>
       )}
 
       {!loadingPersonaLeaderboard && rows.length === 0 && (
-        <div className="flex items-center justify-center h-24 text-sm text-slate-400">No data for current filter</div>
+        <div className="flex h-24 items-center justify-center text-sm text-slate-400">No data for current filter</div>
       )}
 
       {!loadingPersonaLeaderboard && rows.length > 0 && (
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th className="text-left text-[11px] font-semibold text-slate-500 pb-3 tracking-widest uppercase">Persona</th>
-              <th className="text-right text-[11px] font-semibold text-slate-500 pb-3 tracking-widest uppercase">Revenue</th>
-              <th className="text-right text-[11px] font-semibold text-slate-500 pb-3 tracking-widest uppercase">Conv %</th>
-              <th className="w-5" />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, i) => (
-              <tr key={row.id} style={{ borderTop: i === 0 ? '1px solid #F1F5F9' : '1px solid #F8FAFC' }}>
-                <td className="py-3">
-                  <PersonaChip id={row.id} size="sm" />
-                </td>
-                <td className="py-3 text-right text-sm font-bold text-slate-900">{row.revenue}</td>
-                <td className="py-3 text-right text-xs font-semibold text-slate-500">{row.conv}%</td>
-                <td className="py-3 text-right text-xs pl-2">
-                  {row.dir === 'up' ? (
-                    <span className="text-emerald-500 font-bold">↑</span>
-                  ) : (
-                    <span className="text-slate-400 font-bold">→</span>
-                  )}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[440px]">
+            <thead>
+              <tr>
+                <th className="pb-3 text-left text-[11px] font-semibold uppercase tracking-widest text-slate-500">Persona</th>
+                <th className="pb-3 text-right text-[11px] font-semibold uppercase tracking-widest text-slate-500">Revenue</th>
+                <th className="pb-3 text-right text-[11px] font-semibold uppercase tracking-widest text-slate-500">Share</th>
+                <th className="pb-3 text-right text-[11px] font-semibold uppercase tracking-widest text-slate-500">Orders</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={row.id} style={{ borderTop: i === 0 ? '1px solid #F1F5F9' : '1px solid #F8FAFC' }}>
+                  <td className="py-3">
+                    <PersonaChip id={row.id} size="sm" />
+                  </td>
+                  <td className="py-3 text-right text-sm font-bold text-slate-900">{row.revenue}</td>
+                  <td className="py-3 text-right text-xs font-semibold text-slate-500">{row.share}</td>
+                  <td className="py-3 text-right text-xs font-semibold text-slate-600">{row.orders.toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </Card>
   )

@@ -5,6 +5,9 @@ import VisionLogo from './VisionLogo'
 function HomeIcon() {
   return <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
 }
+function ProjectsIcon() {
+  return <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M4 7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7z" /><path strokeLinecap="round" strokeLinejoin="round" d="M8 5V3m8 2V3M4 10h16" /></svg>
+}
 function FunnelIcon() {
   return <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V20a1 1 0 01-.553.894l-4-2A1 1 0 018 18v-4.586L3.293 6.707A1 1 0 013 6V4z" /></svg>
 }
@@ -33,7 +36,10 @@ function SettingsIcon() {
 const NAV = [
   {
     label: 'OVERVIEW',
-    items: [{ id: 'home', label: 'Home', icon: HomeIcon }],
+    items: [
+      { id: 'home', label: 'Home', icon: HomeIcon },
+      { id: 'projects', label: 'Projects', icon: ProjectsIcon },
+    ],
   },
   {
     label: 'ANALYTICS',

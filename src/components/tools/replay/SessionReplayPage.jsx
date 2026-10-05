@@ -5,21 +5,21 @@ import { useAsync } from '../../../hooks/useAsync' // small generic hook, see be
 import SessionPlayer from './SessionPlayer'
 
 export default function SessionReplayPage() {
-  const { period, customRange } = useFilters()
+  const { period, customRange, selectedPersonas } = useFilters()
   const [search, setSearch] = useState('')
   const [selectedUser, setSelectedUser] = useState(null) // { userId, name, email }
   const [openSession, setOpenSession] = useState(null)
 
-  const usersFilters = { period, customRange, search }
+  const usersFilters = { period, customRange, personas: selectedPersonas, search }
   const { data: users, loading: usersLoading, error: usersError } = useAsync(
     () => fetchRecordedUsers(usersFilters),
-    [period, customRange, search]
+    [period, customRange, selectedPersonas.join(','), search]
   )
 
-  const sessionsFilters = { period, customRange, userId: selectedUser?.userId }
+  const sessionsFilters = { period, customRange, personas: selectedPersonas, userId: selectedUser?.userId }
   const { data: sessions, loading: sessionsLoading, error: sessionsError } = useAsync(
     () => selectedUser ? fetchSessions(sessionsFilters) : Promise.resolve([]),
-    [period, customRange, selectedUser?.userId]
+    [period, customRange, selectedPersonas.join(','), selectedUser?.userId]
   )
 
   if (openSession) {
@@ -30,7 +30,7 @@ export default function SessionReplayPage() {
   if (selectedUser) {
     return (
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="shrink-0 px-6 py-3 border-b bg-white flex items-center gap-3" style={{ borderColor: '#F1F5F9' }}>
+        <div className="shrink-0 px-4 sm:px-6 py-3 border-b bg-white flex flex-wrap items-center gap-3" style={{ borderColor: '#F1F5F9' }}>
           <button
             onClick={() => setSelectedUser(null)}
             className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-700"
@@ -45,11 +45,11 @@ export default function SessionReplayPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-auto">
           {sessionsLoading && <p className="text-xs text-slate-400 text-center py-12">Loading sessions…</p>}
           {sessionsError && <p className="text-xs text-red-500 text-center py-12">Unable to load sessions.</p>}
           {!sessionsLoading && !sessionsError && (
-            <table className="w-full">
+            <table className="w-full min-w-[720px]">
               <thead className="sticky top-0 z-10" style={{ background: '#F8FAFC' }}>
                 <tr>
                   {['Session ID', 'Pages Visited', 'Duration', 'Recorded At', ''].map(h => (
@@ -85,9 +85,9 @@ export default function SessionReplayPage() {
   // ── Level 1: all users ──
   return (
     <div className="flex-1 overflow-hidden flex flex-col">
-      <div className="shrink-0 px-6 py-3 border-b bg-white flex items-center gap-3" style={{ borderColor: '#F1F5F9' }}>
+      <div className="shrink-0 px-4 sm:px-6 py-3 border-b bg-white flex flex-wrap items-center gap-3" style={{ borderColor: '#F1F5F9' }}>
         <input
-          className="border rounded-lg px-3 py-1.5 text-sm focus:outline-none"
+          className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100"
           style={{ borderColor: '#E2E8F0', minWidth: 220 }}
           placeholder="Search name, email, or user ID…"
           value={search}
@@ -96,11 +96,11 @@ export default function SessionReplayPage() {
         <span className="ml-auto text-xs text-slate-400">{(users || []).length} user{(users || []).length !== 1 ? 's' : ''}</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-auto">
         {usersLoading && <p className="text-xs text-slate-400 text-center py-12">Loading users…</p>}
         {usersError && <p className="text-xs text-red-500 text-center py-12">Unable to load users.</p>}
         {!usersLoading && !usersError && (
-          <table className="w-full">
+          <table className="w-full min-w-[720px]">
             <thead className="sticky top-0 z-10" style={{ background: '#F8FAFC' }}>
               <tr>
                 {['User', 'User ID', 'Sessions', 'Last Active', ''].map(h => (

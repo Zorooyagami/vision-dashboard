@@ -1,3 +1,4 @@
+import { apiFetch } from './apiClient'
 import { KPI_LABELS, KPI_DEFS } from '../components/home/homeConstants'
 
 export function buildQueryParams(input) {
@@ -14,13 +15,10 @@ export function buildQueryParams(input) {
 }
 
 export async function fetchKpis(params) {
-    console.log('fetchKpis called with params:', params) // Debug log
   const qs = new URLSearchParams(
     Object.entries(params).filter(([, v]) => v != null),
   )
-  const res = await fetch(`/api/analytics/kpis?${qs}`)
-  if (!res.ok) throw new Error(`KPIs fetch failed: ${res.status}`)
-  return res.json()
+  return apiFetch(`/api/analytics/kpis?${qs}`)
 }
 
 export async function fetchRevenueTrend(input, signal) {
@@ -28,9 +26,7 @@ export async function fetchRevenueTrend(input, signal) {
   const qs = new URLSearchParams(
     Object.entries(params).filter(([, v]) => v != null),
   )
-  const res = await fetch(`/api/analytics/revenue?${qs}`, { signal })
-  if (!res.ok) throw new Error(`Revenue trend fetch failed: ${res.status}`)
-  return res.json()
+  return apiFetch(`/api/analytics/revenue?${qs}`, { signal })
 }
 
 function formatCurrencyCompact(value) {
@@ -83,9 +79,7 @@ export async function fetchInsights(params, signal) {
   const qs = new URLSearchParams(
     Object.entries(params ?? {}).filter(([, v]) => v != null),
   )
-  const res = await fetch(`/api/analytics/insights?${qs}`, { signal })
-  if (!res.ok) throw new Error(`Insights fetch failed: ${res.status}`)
-  return res.json()
+  return apiFetch(`/api/analytics/insights?${qs}`, { signal })
 }
 
 // Normalizes the insights response — tolerates either a bare array or

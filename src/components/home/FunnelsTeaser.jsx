@@ -3,7 +3,7 @@ import { FUNNEL_STEPS } from './homeConstants'
 
 export default function FunnelsTeaser({ onNavigate }) {
   return (
-    <Card className="col-span-2 p-5 flex flex-col">
+    <Card className="col-span-1 p-5 flex flex-col xl:col-span-2">
       <div className="flex items-center gap-2 mb-1">
         <span style={{ color: '#6366F1' }}>
           <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
