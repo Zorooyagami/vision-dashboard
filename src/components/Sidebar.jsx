@@ -54,14 +54,14 @@ const NAV = [
     label: 'TOOLS',
     items: [
       { id: 'tools', label: 'Behavior', icon: BehaviorIcon },
-      { id: 'decisions', label: 'Decisions', icon: DecisionIcon },
-      { id: 'alerts', label: 'Alerts & Insights', icon: AlertIcon },
+      // { id: 'decisions', label: 'Decisions', icon: DecisionIcon },
+      // { id: 'alerts', label: 'Alerts & Insights', icon: AlertIcon },
     ],
   },
-  {
-    label: 'ADMIN',
-    items: [{ id: 'settings', label: 'Settings', icon: SettingsIcon }],
-  },
+  // {
+  //   label: 'ADMIN',
+  //   items: [{ id: 'settings', label: 'Settings', icon: SettingsIcon }],
+  // },
 ]
 
 export default function Sidebar({ active, onNavigate }) {
@@ -156,7 +156,7 @@ export default function Sidebar({ active, onNavigate }) {
       </nav>
 
       {/* Footer */}
-      <div className="px-2 pb-3 shrink-0" style={{ borderTop: '1px solid #1E2230' }}>
+      <div className="px-2 pb-3 shrink-0 hidden" style={{ borderTop: '1px solid #1E2230' }}>
         <button
           onClick={() => onNavigate('settings')}
           className="w-full flex items-center rounded-lg transition-all hover:bg-white/5 group relative"

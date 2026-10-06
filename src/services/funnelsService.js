@@ -4,8 +4,9 @@
 //
 // Adjust `request()` to match however useUsers authenticates and sends the project
 // (header name, auth token, base URL). Everything else is independent of that.
+import { apiFetch } from './apiClient'
 
-const BASE = '/api/explore/funnels'
+const BASE = 'https://vision-backend-production-e072.up.railway.app/api/explore/funnels'
 
 function toQuery(filters = {}) {
   const p = new URLSearchParams()

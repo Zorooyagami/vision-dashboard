@@ -133,7 +133,7 @@ export default function AiInsightsPanel({
    *
    * For this home panel we flatten them into one list.
    */
-   const insightList = (insights?.insights || []).slice(0, 6);
+   const insightList = (insights?.insights || []).slice(0, 12);
 
    const handleRefresh = async () => {
     if (refreshing || generating) return;

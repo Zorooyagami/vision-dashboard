@@ -49,11 +49,11 @@ export default function Home({ decisions, onNavigate, onLogDecision }) {
       <RevenueTrendCard platform={platform} decisions={decisions} />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-4">
-        <KpiWatchlist onViewAll={() => onNavigate('metrics')} />
+        {/* <KpiWatchlist className="hidden"onViewAll={() => onNavigate('metrics')} /> */}
         <FunnelsTeaser onNavigate={onNavigate} />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-5 hidden">
         <PersonaDistribution
           selectedCount={selectedPersonas.length}
           visiblePersonas={visiblePersonas}
