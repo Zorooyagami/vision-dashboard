@@ -1,3 +1,4 @@
+//components/tools/replay/SessionPlayer.jsx
 import { useState, useEffect, useRef } from 'react'
 import 'rrweb-player/dist/style.css'
 import { apiRequest } from '../../../services/apiClient'

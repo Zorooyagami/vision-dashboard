@@ -662,7 +662,7 @@ function ProjectCard({
             disabled={deleting}
             onClick={onDelete}
             title="Delete project"
-            className="
+            className=" hidden
               rounded-lg
               border
               border-slate-200

@@ -1,3 +1,4 @@
+//src/services/eventsApi.js
 import { apiFetch } from './apiClient'
 
 const API_BASE = '/api/admin'

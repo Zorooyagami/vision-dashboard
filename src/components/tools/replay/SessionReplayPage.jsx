@@ -1,3 +1,4 @@
+//components/tools/replay/SessionReplayPage.jsx
 import { useState } from 'react'
 import { useFilters } from '../../../context/FiltersContext'
 import { fetchRecordedUsers, fetchSessions } from '../../../services/sessionReplayApi'

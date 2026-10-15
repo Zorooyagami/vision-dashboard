@@ -1,3 +1,4 @@
+//src/pages/Home.jsx
 import KpiRow from '../components/home/KpiRow'
 import InsightsPanel from '../components/home/AiInsightsPanel'
 import RevenueTrendCard from '../components/home/RevenueTrendCard'
@@ -9,6 +10,7 @@ import { useFilters } from '../context/FiltersContext'
 import { useKpiData } from '../hooks/useKpiData'
 import { PERSONAS } from '../data/personas'
 import { usePersonaLeaderboard } from '../hooks/usePersonaLeaderboard'
+import LiveCard from '../components/home/LiveCard'
 
 export default function Home({ decisions, onNavigate, onLogDecision }) {
   const { platform, selectedPersonas, period, customRange, device } = useFilters()
@@ -40,7 +42,7 @@ export default function Home({ decisions, onNavigate, onLogDecision }) {
   return (
     <div className="space-y-5 p-4 sm:p-6">
       <KpiRow kpis={cards} loading={loading} error={error} />
-
+      <LiveCard onNavigate={onNavigate} />
       <InsightsPanel
         onNavigate={onNavigate}
         onLogDecision={onLogDecision}

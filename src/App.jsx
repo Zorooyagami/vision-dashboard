@@ -9,7 +9,7 @@ import {
   useNavigate,
   useLocation,
 } from 'react-router-dom'
-
+import Live from './pages/Live'
 import Sidebar from './components/Sidebar'
 import TopbarHost from './components/TopbarHost'
 
@@ -52,6 +52,7 @@ const SCREEN_TITLES = {
   tools: 'Behavior',
   explore: 'Explore',
   projects: 'Projects',
+  live: 'Live',
 }
 
 /* =========================================================
@@ -265,6 +266,11 @@ function AuthenticatedApp() {
                 }
               />
 
+              <Route
+                path="/live"
+                element={<Live onNavigate={onNavigate} />}
+              />
+            
               <Route
                 path="/personas"
                 element={

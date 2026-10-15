@@ -1,3 +1,4 @@
+//src/context/FiltersContext.jsx
 import { createContext, useContext, useState, useCallback } from 'react'
 
 const FiltersContext = createContext(null)
