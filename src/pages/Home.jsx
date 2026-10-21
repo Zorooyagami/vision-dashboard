@@ -1,4 +1,5 @@
 //src/pages/Home.jsx
+import AtAGlance from '../components/home/AtAGlance'
 import KpiRow from '../components/home/KpiRow'
 import InsightsPanel from '../components/home/AiInsightsPanel'
 import RevenueTrendCard from '../components/home/RevenueTrendCard'
@@ -42,7 +43,10 @@ export default function Home({ decisions, onNavigate, onLogDecision }) {
   return (
     <div className="space-y-5 p-4 sm:p-6">
       <KpiRow kpis={cards} loading={loading} error={error} />
-      <LiveCard onNavigate={onNavigate} />
+      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2 [&>*]:min-w-0">
+        <LiveCard onNavigate={onNavigate} />
+        <AtAGlance />
+      </div>
       <InsightsPanel
         onNavigate={onNavigate}
         onLogDecision={onLogDecision}

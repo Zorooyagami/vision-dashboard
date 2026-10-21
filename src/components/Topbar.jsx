@@ -75,6 +75,7 @@ export default function Topbar({
     { label: 'Conversion Funnel', path: '/conversion' },
     { label: 'Explore', path: '/explore' },
     { label: 'Revenue by Persona', path: '/revenue' },
+    { label: 'Revenue Opportunity Radar', path: '/opportunities' },
     { label: 'Personas Explorer', path: '/personas' },
     { label: 'Behavior', path: '/tools' },
     { label: 'Decision Tracking', path: '/decisions' },

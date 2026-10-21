@@ -4,7 +4,9 @@ import { createContext, useContext, useState, useCallback } from 'react'
 const FiltersContext = createContext(null)
 
 export function FiltersProvider({ children }) {
-  const [platform, setPlatform] = useState('combined')
+  const [platform, updatePlatform] = useState('combined')
+  const [intelligenceDevice, setIntelligenceDevice] = useState('all')
+  const setPlatform = useCallback((value) => { updatePlatform(value); setIntelligenceDevice('all') }, [])
   const [selectedPersonas, setSelectedPersonas] = useState([])
   const [period, setPeriod] = useState('30d')
   const [customRange, setCustomRange] = useState(null)
@@ -17,7 +19,7 @@ export function FiltersProvider({ children }) {
   }, [])
 
   const value = {
-    platform, setPlatform,
+    platform, setPlatform, intelligenceDevice, setIntelligenceDevice,
     selectedPersonas, setSelectedPersonas,
     period, onPeriodChange,
     customRange,

@@ -17,6 +17,7 @@ import Home from './pages/Home'
 import PersonasPage from './pages/Personas'
 import DecisionsPage from './pages/Decisions'
 import RevenuePage from './pages/Revenue'
+import RevenueOpportunityRadar from './pages/RevenueOpportunityRadar'
 import AlertsPage from './pages/Alerts'
 import ConversionPage from './pages/Conversion'
 import SettingsPage from './pages/Settings'
@@ -30,6 +31,12 @@ import ProjectsPage from './components/projects/ProjectsPage'
 import RequireProject from './components/projects/RequireProject'
 import RequireAuth from './components/RequireAuth'
 
+import AtAGlancePage from './pages/AtAGlance'
+import AskDashboard from './pages/AskDashboard'
+import RevenueInvestigator from './pages/RevenueInvestigator'
+import JourneyComparison from './pages/JourneyComparison'
+import ProductIntelligence from './pages/ProductIntelligence'
+
 import {
   FiltersProvider,
   useFilters,
@@ -42,9 +49,15 @@ import {
 
 const SCREEN_TITLES = {
   home: 'Overview',
+  'at-a-glance': 'At a glance',
+  'ask-dashboard': 'Ask the dashboard',
+  'revenue-investigator': 'Revenue investigator',
+  'journey-comparison': 'Journey comparison',
   personas: 'Personas Explorer',
   decisions: 'Decision Tracking',
   revenue: 'Revenue by Persona',
+  opportunities: 'Revenue Opportunity Radar',
+  products: 'Product Intelligence',
   alerts: 'Alerts & Insights',
   conversion: 'Conversion Funnel',
   settings: 'Settings',
@@ -267,9 +280,15 @@ function AuthenticatedApp() {
               />
 
               <Route
-                path="/live"
-                element={<Live onNavigate={onNavigate} />}
-              />
+                              path="/at-a-glance" element={<AtAGlancePage />} />
+                            <Route path="/ask-dashboard" element={<AskDashboard />} />
+                            <Route path="/revenue-investigator" element={<RevenueInvestigator />} />
+                            <Route path="/journey-comparison" element={<JourneyComparison />} />
+                            <Route path="/products" element={<ProductIntelligence />} />
+                            <Route path="/live"
+                              element={<Live onNavigate={onNavigate} />}
+                            />
+                          
             
               <Route
                 path="/personas"
@@ -303,6 +322,11 @@ function AuthenticatedApp() {
                     }
                   />
                 }
+              />
+
+              <Route
+                path="/opportunities"
+                element={<RevenueOpportunityRadar />}
               />
 
               <Route

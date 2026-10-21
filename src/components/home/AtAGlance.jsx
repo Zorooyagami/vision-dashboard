@@ -1,0 +1,4 @@
+import {Link} from 'react-router-dom'
+import {useIntelligence} from '../../hooks/useIntelligence'
+import {FactList,LoadingError,Icon,Warnings,Scope} from '../intelligence/shared'
+export default function AtAGlance(){const {data,loading,error,retry}=useIntelligence();return <section className="vi-card vi-home"><div className="vi-cardhead"><div><h2>At a glance</h2><p>Facts from your selected sessions</p></div><span className="vi-spark"><Icon/></span></div><LoadingError loading={loading} error={error} retry={retry}/>{data&&<><Warnings data={data}/><Scope data={data}/><FactList facts={data.facts.slice(0,3)}/>{!data.current.sessions&&<p className="vi-note">No activity matches this selection. Change the reporting filters.</p>}</>}<div className="vi-cardfoot"><span>Calculated from your project data</span><Link to="/at-a-glance">View more →</Link></div></section>}

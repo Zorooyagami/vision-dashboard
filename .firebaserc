@@ -1,5 +1,16 @@
 {
   "projects": {
-    "default": "mini-auction-af1f2"
-  }
+    "default": "vision-engine-insights",
+    "site": "vision-engine-insights"
+  },
+  "targets": {
+    "vision-dashboard-28eb5": {
+      "hosting": {
+        "vision-engine-insights": [
+          "vision-engine-insights"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

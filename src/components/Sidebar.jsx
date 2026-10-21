@@ -47,7 +47,18 @@ const NAV = [
       { id: 'conversion', label: 'Conversion', icon: FunnelIcon },
       { id: 'explore', label: 'Explore', icon: ExploreIcon },
       { id: 'revenue', label: 'Revenue', icon: RevenueIcon },
+      { id: 'opportunities', label: 'Opportunity Radar', icon: RevenueIcon },
+      { id: 'products', label: 'Product Intelligence', icon: ProjectsIcon },
       { id: 'personas', label: 'Personas', icon: PersonasIcon },
+    ],
+  },
+  {
+    label: 'INTELLIGENCE',
+    items: [
+      { id: 'at-a-glance', label: 'At a glance', icon: HomeIcon },
+      { id: 'ask-dashboard', label: 'Ask the dashboard', icon: ExploreIcon },
+      { id: 'revenue-investigator', label: 'Revenue investigator', icon: RevenueIcon },
+      { id: 'journey-comparison', label: 'Journey comparison', icon: FunnelIcon },
     ],
   },
   {
