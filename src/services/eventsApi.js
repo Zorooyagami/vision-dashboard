@@ -24,10 +24,10 @@ export async function toggleEventStatus(name) {
   })
 }
 
-export async function createEvent({ name, description, category }) {
+export async function createEvent({ name, description, category, tracking, status }) {
   const data = await apiFetch(`${API_BASE}/events`, {
     method: 'POST',
-    body: JSON.stringify({ name, description, category }),
+    body: JSON.stringify({ name, description, category, tracking, status }),
   })
   return data?.event
 }

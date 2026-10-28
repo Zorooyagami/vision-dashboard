@@ -10,7 +10,7 @@ const TABS = [
   { id: 'events',   label: 'Events' },
   { id: 'users',  label: 'Users' },
   { id: 'funnels',  label: 'Funnels' },
-  // { id: 'query',    label: 'Query Builder' },
+  { id: 'query',    label: 'Query Builder' },
   { id: 'journeys', label: 'Journeys' },
 ]
 

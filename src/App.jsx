@@ -36,6 +36,7 @@ import AskDashboard from './pages/AskDashboard'
 import RevenueInvestigator from './pages/RevenueInvestigator'
 import JourneyComparison from './pages/JourneyComparison'
 import ProductIntelligence from './pages/ProductIntelligence'
+import AudienceIntelligence from './pages/AudienceIntelligence'
 
 import {
   FiltersProvider,
@@ -58,6 +59,7 @@ const SCREEN_TITLES = {
   revenue: 'Revenue by Persona',
   opportunities: 'Revenue Opportunity Radar',
   products: 'Product Intelligence',
+  audience: 'Audience Intelligence',
   alerts: 'Alerts & Insights',
   conversion: 'Conversion Funnel',
   settings: 'Settings',
@@ -285,6 +287,7 @@ function AuthenticatedApp() {
                             <Route path="/revenue-investigator" element={<RevenueInvestigator />} />
                             <Route path="/journey-comparison" element={<JourneyComparison />} />
                             <Route path="/products" element={<ProductIntelligence />} />
+                            <Route path="/audience" element={<AudienceIntelligence />} />
                             <Route path="/live"
                               element={<Live onNavigate={onNavigate} />}
                             />

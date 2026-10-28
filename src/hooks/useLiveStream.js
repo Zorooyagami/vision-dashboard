@@ -4,7 +4,9 @@ import { useProject } from '../context/ProjectContext'
 
 const MAX_EVENTS = 300
 const SPARK_POINTS = 40
-const API_BASE = '/api/admin'
+import { API_BASE_URL } from '../services/apiClient'
+
+const API_BASE = `${API_BASE_URL}/api/admin`
 
 // Friendly names for what the SDK detects (deviceInfo.os / deviceInfo.browser)
 const OS_NAMES = { 'Mac OS': 'Mac', Windows: 'Windows', iOS: 'iOS', Android: 'Android', Linux: 'Linux', 'Chrome OS': 'ChromeOS' }

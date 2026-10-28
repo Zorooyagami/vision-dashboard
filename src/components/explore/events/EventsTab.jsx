@@ -1,5 +1,7 @@
 // src/components/explore/events/EventsTab.jsx
-import { useState } from 'react'
+import { apiFetch } from '../../../services/apiClient'
+import { useProject } from '../../../context/ProjectContext'
+import { useEffect, useState } from 'react'
 import MiniSparkline from '../../MiniSparkline'
 import { CATEGORY_META } from '../exploreData'
 import { CategoryBadge, fmtVol, fmtRelativeTime } from '../exploreUtils'
@@ -9,10 +11,12 @@ import EventDetailPanel from './EventDetailPanel'
 import AddEventModal from './AddEventModal'
 
 function EventsTab() {
+  const { projectId } = useProject()
+  const [editingEvent, setEditingEvent] = useState(null)
   const { platform, period, customRange, device, selectedPersonas } = useFilters()
   const filters = { period, customRange, platform, device, selectedPersonas }
 
-  const { events, loading, error, toggleStatus, addEvent } = useEvents(filters)
+  const { events, loading, error, toggleStatus, addEvent, reload } = useEvents(filters)
 
   const [search, setSearch] = useState('')
   const [catFilter, setCatFilter] = useState('all')
@@ -20,6 +24,7 @@ function EventsTab() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [menuOpen, setMenuOpen] = useState(null)
   const [addError, setAddError] = useState(null)
+  useEffect(() => { setShowAddModal(false); setEditingEvent(null); setSelectedEvent(null) }, [projectId])
 
   const filtered = events.filter(e => {
     const matchSearch = e.name.toLowerCase().includes(search.toLowerCase()) || (e.description || '').toLowerCase().includes(search.toLowerCase())
@@ -33,13 +38,10 @@ function EventsTab() {
   })).filter(g => g.items.length > 0)
 
   const handleAdd = async (payload) => {
-    setAddError(null)
-    try {
-      await addEvent(payload)
-      setShowAddModal(false)
-    } catch (err) {
-      setAddError(err.message)
-    }
+    if (editingEvent) {
+      await apiFetch('/api/tracking/rules/' + encodeURIComponent(editingEvent.name), { method: 'PATCH', body: JSON.stringify(payload) })
+      await reload()
+    } else await addEvent(payload)
   }
 
   return (
@@ -70,7 +72,7 @@ function EventsTab() {
           ))}
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => { setEditingEvent(null); setShowAddModal(true) }}
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl text-white hover:opacity-90 transition-opacity"
           style={{ background: '#6366F1' }}
         >
@@ -112,7 +114,7 @@ function EventsTab() {
                 >
                   <td className="px-4 py-3">
                     <span className="text-sm font-mono font-semibold text-slate-800">{event.name}</span>
-                    <p className="text-[11px] text-slate-400 mt-0.5 max-w-[240px] truncate">{event.description || '—'}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5 max-w-[240px] truncate">{event.tracking ? '↗ Click rule · ' + event.tracking.selector : event.description || '—'}</p>
                   </td>
                   <td className="px-4 py-3"><CategoryBadge cat={event.category} categoryMeta={CATEGORY_META} /></td>
                   <td className="px-4 py-3 text-xs font-medium text-slate-500">{event.platform}</td>
@@ -137,7 +139,7 @@ function EventsTab() {
                     </button>
                     {menuOpen === event.id && (
                       <div className="absolute right-4 top-10 bg-white rounded-xl border z-10 overflow-hidden" style={{ borderColor: '#E2E8F0', boxShadow: '0 4px 16px rgba(15,23,42,0.12)', minWidth: 120 }}>
-                        <button className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">Edit</button>
+                        {event.tracking && <button onClick={() => { setEditingEvent(event); setShowAddModal(true); setMenuOpen(null) }} className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">Edit click rule</button>}
                         <button
                           className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50"
                           style={{ color: '#B91C1C' }}
@@ -156,6 +158,8 @@ function EventsTab() {
       {selectedEvent && <EventDetailPanel event={selectedEvent} onClose={() => setSelectedEvent(null)} />}
       {showAddModal && (
         <AddEventModal
+          key={projectId}
+          initialEvent={editingEvent}
           onClose={() => { setShowAddModal(false); setAddError(null) }}
           onAdd={handleAdd}
           error={addError}
