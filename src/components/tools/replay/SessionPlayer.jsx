@@ -14,75 +14,99 @@ export default function SessionPlayer({ session, onClose }) {
 
   useEffect(() => {
     let cancelled = false
+    let frame = 0
+    let scaleFrame = 0
+    let observer = null
+    let Player = null
+    let replayEvents = null
+    let previousWidth = 0
+    let previousHeight = 0
+    const controller = new AbortController()
+    const host = containerRef.current
+
+    const fail = (err) => {
+      if (cancelled || controller.signal.aborted) return
+      console.error('[SessionPlayer] failed to load:', err)
+      setStatus('error')
+    }
+
+    // The host is an absolutely positioned box in a bounded flex area.
+    // Its size never depends on the player's own dimensions.
+    const fitPlayer = () => {
+      frame = 0
+      if (cancelled || !host || !Player || !replayEvents) return
+      if (document.fullscreenElement && host.contains(document.fullscreenElement)) return
+      const width = Math.floor(host.clientWidth)
+      const availableHeight = Math.floor(host.clientHeight)
+      const controls = host.querySelector('.rr-controller')
+      // rrweb-player's controller is 80px by default (not 70px).
+      // Measure it too: narrow layouts can wrap its buttons onto another row.
+      const controlsHeight = controls ? Math.ceil(controls.getBoundingClientRect().height) : 80
+      if (width < 1 || availableHeight <= controlsHeight) return
+      const height = availableHeight - controlsHeight
+      try {
+        if (!playerRef.current) {
+          playerRef.current = new Player({
+            target: host,
+            props: { events: replayEvents, width, height, autoPlay: false,
+              showController: true, skipInactive: true },
+          })
+          const toolbar = host.querySelector('.rr-controller')
+          if (toolbar) observer?.observe(toolbar)
+          setStatus('ready')
+        } else if (width !== previousWidth || height !== previousHeight) {
+          // Resize the same player, preserving playback position and state.
+          playerRef.current.$set({ width, height })
+        }
+        previousWidth = width
+        previousHeight = height
+        cancelAnimationFrame(scaleFrame)
+        scaleFrame = requestAnimationFrame(() => {
+          if (cancelled) return
+          try { playerRef.current?.triggerResize?.() } catch (err) { fail(err) }
+        })
+      } catch (err) { fail(err) }
+    }
+    const scheduleFit = () => {
+      if (!cancelled && !frame) frame = requestAnimationFrame(fitPlayer)
+    }
+
+    if (host) {
+      observer = new ResizeObserver(scheduleFit)
+      observer.observe(host)
+    }
+    window.addEventListener('resize', scheduleFit)
+    document.addEventListener('fullscreenchange', scheduleFit)
 
     const loadReplay = async () => {
+      setStatus('loading')
       try {
-        setStatus('loading')
-
         const [{ default: rrwebPlayer }, response] = await Promise.all([
           import('rrweb-player'),
-          apiRequest(`${API_BASE}/${encodeURIComponent(session.sessionId)}`),
+          apiRequest(`${API_BASE}/${encodeURIComponent(session.sessionId)}`, { signal: controller.signal }),
         ])
-
-        if (!response.ok) {
-          throw new Error(`Status ${response.status}`)
-        }
-
+        if (!response.ok) throw new Error(`Status ${response.status}`)
         const { events } = await response.json()
         if (cancelled) return
-
-        if (!events?.length) {
+        if (!Array.isArray(events) || events.length < 2) {
           setStatus('empty')
           return
         }
-
-        // Allow browser to finish laying out the replay area first
-        requestAnimationFrame(() => {
-          if (cancelled || !containerRef.current) return
-
-          const rect = containerRef.current.getBoundingClientRect()
-
-          const width = Math.max(Math.floor(rect.width), 320)
-
-          // Leave room for rrweb controls
-          const height = Math.max(
-            Math.floor(rect.height - 70),
-            360
-          )
-
-          playerRef.current?.$destroy?.()
-
-          playerRef.current = new rrwebPlayer({
-            target: containerRef.current,
-
-            props: {
-              events,
-              width,
-              height,
-              autoPlay: false,
-
-              // Optional
-              showController: true,
-              skipInactive: true,
-            },
-          })
-
-          setStatus('ready')
-        })
-      } catch (err) {
-        console.error('[SessionPlayer] failed to load:', err)
-
-        if (!cancelled) {
-          setStatus('error')
-        }
-      }
+        Player = rrwebPlayer
+        replayEvents = events
+        scheduleFit()
+      } catch (err) { fail(err) }
     }
-
     loadReplay()
 
     return () => {
       cancelled = true
-
+      controller.abort()
+      cancelAnimationFrame(frame)
+      cancelAnimationFrame(scaleFrame)
+      observer?.disconnect()
+      window.removeEventListener('resize', scheduleFit)
+      document.removeEventListener('fullscreenchange', scheduleFit)
       playerRef.current?.$destroy?.()
       playerRef.current = null
     }
@@ -90,29 +114,21 @@ export default function SessionPlayer({ session, onClose }) {
 
   return (
     <>
-      <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white">
+      <div className="vision-session-replay flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
 
         {/* HEADER */}
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
-          <div>
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 px-3 py-3 sm:px-6 sm:py-4">
+          <div className="min-w-0">
             <h2 className="text-lg font-semibold text-slate-900">
               Session Replay
             </h2>
 
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 truncate text-xs text-slate-500">
               {session.sessionId}
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShareOpen(true)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              Share
-            </button>
-
+          <div className="flex items-center gap-2">            
             <button
               type="button"
               onClick={onClose}
@@ -127,7 +143,7 @@ export default function SessionPlayer({ session, onClose }) {
         <div className="flex min-h-0 flex-1 overflow-hidden">
 
           {/* PLAYER SECTION */}
-          <div className="flex min-w-0 flex-1 flex-col bg-slate-50 p-5">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-slate-50 p-2 sm:p-4">
 
             <div
               className="
@@ -135,7 +151,7 @@ export default function SessionPlayer({ session, onClose }) {
                 flex
                 min-h-0
                 flex-1
-                overflow-auto
+                overflow-hidden
                 rounded-2xl
                 border
                 border-slate-200
@@ -161,7 +177,7 @@ export default function SessionPlayer({ session, onClose }) {
               {status === 'empty' && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <p className="text-sm text-slate-400">
-                    No events found for this session.
+                    Not enough events to play this session yet.
                   </p>
                 </div>
               )}
@@ -184,11 +200,8 @@ export default function SessionPlayer({ session, onClose }) {
               <div
                 ref={containerRef}
                 className="
-                  h-full
-                  min-h-[500px]
-                  w-full
-                  min-w-0
-                  [&_.rr-player]:mx-auto
+                  absolute inset-0
+                  min-h-0 min-w-0 overflow-hidden
                 "
                 style={{
                   visibility:
@@ -201,7 +214,7 @@ export default function SessionPlayer({ session, onClose }) {
           </div>
 
           {/* SIDE PANEL */}
-          <aside className="hidden w-[300px] shrink-0 border-l border-slate-200 bg-white xl:block">
+          <aside className="hidden min-h-0 w-[260px] shrink-0 overflow-y-auto border-l border-slate-200 bg-white xl:block">
             <div className="p-5">
               <h3 className="text-sm font-semibold text-slate-900">
                 Session details
@@ -260,6 +273,26 @@ export default function SessionPlayer({ session, onClose }) {
           </aside>
         </div>
       </div>
+
+      <style>{`
+        .vision-session-replay .rr-player:not(:fullscreen) {
+          float: none;
+          height: auto !important;
+          box-shadow: none;
+        }
+        .vision-session-replay .rr-controller {
+          min-height: 80px;
+          height: auto !important;
+          box-sizing: border-box;
+          padding: 8px 4px;
+          gap: 8px;
+        }
+        .vision-session-replay .rr-controller__btns {
+          max-width: 100%;
+          flex-wrap: wrap;
+          row-gap: 4px;
+        }
+      `}</style>
 
       {/* SHARE MODAL */}
       {shareOpen && (

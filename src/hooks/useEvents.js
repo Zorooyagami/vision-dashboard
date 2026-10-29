@@ -1,6 +1,6 @@
 // src/hooks/useEvents.js
 import { useState, useEffect, useCallback } from 'react';
-import { fetchEvents, toggleEventStatus, createEvent } from '../services/eventsApi';
+import { fetchEvents, toggleEventStatus, createEvent, updateEvent } from '../services/eventsApi';
 import { useProject } from '../context/ProjectContext'
 
 export function useEvents(filters) {
@@ -40,5 +40,11 @@ export function useEvents(filters) {
     return created;
   }, [load]);
 
-  return { events, loading, error, reload: load, toggleStatus, addEvent };
+  const editEvent = useCallback(async (name, patch) => {
+    const updated = await updateEvent(name, patch); // caller handles validation errors
+    await load();
+    return updated;
+  }, [load]);
+
+  return { events, loading, error, reload: load, toggleStatus, addEvent, editEvent };
 }

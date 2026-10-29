@@ -1,38 +1,49 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { apiRequest } from '../services/apiClient'
-
-const API_BASE = '/api/admin'
+import { useProject } from '../context/ProjectContext'
 
 export function useInsights() {
-  const [insights, setInsights] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const { projectId } = useProject()
+  const [state, setState] = useState({ projectId: null, insights: null, loading: false, error: null })
+  const requestRef = useRef(0)
+  const controllerRef = useRef(null)
+
+  useEffect(() => () => {
+    requestRef.current += 1
+    controllerRef.current?.abort()
+  }, [projectId])
 
   const fetchInsights = useCallback(async (insightWindow) => {
-    setLoading(true)
-    setError(null)
-
+    const request = ++requestRef.current
+    controllerRef.current?.abort()
+    if (!projectId) {
+      setState({ projectId, insights: null, loading: false, error: null })
+      return
+    }
+    const controller = new AbortController()
+    controllerRef.current = controller
+    setState({ projectId, insights: null, loading: true, error: null })
     try {
       const params = new URLSearchParams()
       if (insightWindow) params.set('window', insightWindow)
-
-      const endpoint = `${API_BASE}/insights${params.size ? `?${params.toString()}` : ''}`
-      const response = await apiRequest(endpoint)
-
-      if (response.status === 404) {
-        setInsights({ generatedAt: null, insights: [] })
-        return
+      const response = await apiRequest(`/api/admin/insights${params.size ? `?${params}` : ''}`, { signal: controller.signal })
+      let data
+      if (response.status === 404) data = { generatedAt: null, insights: [] }
+      else {
+        if (!response.ok) throw new Error('Failed to fetch insights')
+        data = await response.json()
       }
-
-      if (!response.ok) throw new Error('Failed to fetch insights')
-
-      setInsights(await response.json())
+      if (request === requestRef.current && !controller.signal.aborted) {
+        setState({ projectId, insights: data, loading: false, error: null })
+      }
+      return data
     } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
+      if (request === requestRef.current && !controller.signal.aborted) {
+        setState({ projectId, insights: null, loading: false, error: err.message })
+      }
     }
-  }, [])
+  }, [projectId])
 
-  return { insights, loading, error, fetchInsights }
+  const current = state.projectId === projectId ? state : { insights: null, loading: Boolean(projectId), error: null }
+  return { insights: current.insights, loading: current.loading, error: current.error, fetchInsights }
 }

@@ -1,8 +1,9 @@
 // src/pages/Live.jsx
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Card } from '../components/home/shared'
 import LiveSessionPlayer from '../components/live/LiveSessionPlayer'
 import { useLiveStream } from '../hooks/useLiveStream'
+import { apiFetch } from '../services/apiClient'
 import { LiveBadge, Sparkline, FeedRow, eventMeta, who, describe, timeAgo } from '../components/live/liveShared'
 
 const ACTIVE_WINDOW = 5 * 60 * 1000
@@ -13,6 +14,44 @@ export default function Live({ onNavigate }) {
   const [query, setQuery] = useState('')
   const recFor = (s) => (s.userId ? recordings[s.userId] : null) // set when rrweb chunks are arriving
   const [watching, setWatching] = useState(null) // session opened in the replay overlay
+  const [looking, setLooking] = useState(null) // sessionId whose recording is being looked up
+  const [watchNote, setWatchNote] = useState(null) // { sessionId, text } shown under a row
+
+  const openPlayer = (s, recordingSessionId) =>
+    setWatching({ ...s, sessionId: recordingSessionId, pages: s.path ? [s.path] : [] })
+
+  // The live "recording" signal is in memory on the server: it is empty after a restart and
+  // expires 5 minutes after the last chunk. So when it is missing, ask the database for the
+  // user's most recent recorded session instead of leaving the button dead.
+  const handleWatch = async (s) => {
+    setWatchNote(null)
+    const rec = recFor(s)
+    if (rec) return openPlayer(s, rec.sessionId)
+
+    setLooking(s.sessionId)
+    try {
+      const data = await apiFetch(`/api/record/users/${encodeURIComponent(s.userId)}/sessions`)
+      const latest = (data?.sessions || [])
+        .filter((x) => x.chunkCount > 0)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0]
+      if (latest) openPlayer(s, latest.sessionId)
+      else setWatchNote({ sessionId: s.sessionId, text: 'No recording stored for this user yet. Recording starts when a signed-in user is on a recorded page (home, products, cart, checkout).' })
+    } catch (err) {
+      console.error('[Live] recording lookup failed', err)
+      setWatchNote({ sessionId: s.sessionId, text: `Could not look up the recording (${err.message}).` })
+    } finally {
+      setLooking(null)
+    }
+  }
+
+  // A user who logs out and back in starts a NEW recording session. If we are watching that
+  // user, follow them to the newest session instead of staying on the finished one.
+  const liveRec = watching?.userId ? recordings[watching.userId] : null
+  useEffect(() => {
+    if (liveRec?.sessionId && watching && liveRec.sessionId !== watching.sessionId) {
+      setWatching((w) => (w ? { ...w, sessionId: liveRec.sessionId } : w))
+    }
+  }, [liveRec?.sessionId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sessions = useMemo(() => {
     const m = new Map() // events are newest-first, so first hit = latest event
@@ -92,21 +131,26 @@ export default function Live({ onNavigate }) {
           <p className="mb-3 text-base font-bold text-slate-900">Active sessions <span className="text-xs font-normal text-slate-400">({visibleSessions.length})</span></p>
           {visibleSessions.length === 0 && <p className="py-6 text-center text-xs text-slate-400">{terms.length ? 'No active sessions match your search' : 'No active sessions'}</p>}
           {visibleSessions.map((s) => (
-            <div key={s.sessionId} className="flex items-center gap-3 border-b border-slate-100 py-2 last:border-0">
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-slate-800">{who(s)}{recFor(s) && <span className="ml-2 text-[10px] font-semibold text-red-500">● REC</span>}</p>
-                <p className="truncate text-xs text-slate-400">
-                  {describe(s)} · {timeAgo(s.ts, now)}
-                </p>
+            <div key={s.sessionId} className="border-b border-slate-100 py-2 last:border-0">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-slate-800">{who(s)}{recFor(s) && <span className="ml-2 text-[10px] font-semibold text-red-500">● REC</span>}</p>
+                  <p className="truncate text-xs text-slate-400">
+                    {describe(s)} · {timeAgo(s.ts, now)}
+                  </p>
+                </div>
+                <button
+                  disabled={!s.userId || looking === s.sessionId}
+                  title={!s.userId ? 'Replay is recorded for signed-in users only' : recFor(s) ? 'Watch session' : 'Look for this user\'s latest recording'}
+                  onClick={() => handleWatch(s)}
+                  className="shrink-0 rounded-lg border border-indigo-200 px-3 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {looking === s.sessionId ? 'Looking…' : '▶ Watch'}
+                </button>
               </div>
-              <button
-                disabled={!recFor(s)}
-                title={s.isGuest ? 'Replay is recorded for signed-in users only' : recFor(s) ? 'Watch session' : 'No recording received yet'}
-                onClick={() => setWatching({ ...s, sessionId: recFor(s).sessionId, pages: s.path ? [s.path] : [] })}
-                className="shrink-0 rounded-lg border border-indigo-200 px-3 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                ▶ Watch
-              </button>
+              {watchNote?.sessionId === s.sessionId && (
+                <p className="mt-1.5 rounded-md bg-amber-50 px-2.5 py-1.5 text-[11px] text-amber-700">{watchNote.text}</p>
+              )}
             </div>
           ))}
         </Card>
@@ -137,7 +181,12 @@ export default function Live({ onNavigate }) {
 
     {watching && (
       <div className="fixed inset-0 z-40 bg-white">
-        <LiveSessionPlayer session={watching} onClose={() => setWatching(null)} />
+        <LiveSessionPlayer
+          session={watching}
+          onClose={() => setWatching(null)}
+          initialMode="live"
+          liveSignal={liveRec?.ts}
+        />
       </div>
     )}
     </>

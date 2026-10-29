@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Card, SparkleIcon, ViewAllBtn } from './shared'
 import { SENTIMENT_DOT } from './homeConstants'
 import { useGenerateInsights } from './../../hooks/useGenerateInsights'
@@ -96,8 +95,7 @@ export default function AiInsightsPanel({
 }) {
   const { period } = useFilters();
   const window = periodToWindow(period);
-  const [refreshing, setRefreshing] = useState(false)
-  const [lastRefreshed, setLastRefreshed] = useState(null)
+
 
   const {
     generate,
@@ -112,50 +110,21 @@ export default function AiInsightsPanel({
     fetchInsights,
   } = useInsights()
 
+  const refreshing = generating
+
   // Load cached insights when dashboard mounts
   useEffect(() => {
     fetchInsights(window)
   }, [fetchInsights, window])
 
-  /*
-   * Your API appears to return insights grouped by window.
-   *
-   * Example:
-   *
-   * {
-   *   week: {
-   *     insights: [...]
-   *   },
-   *   month: {
-   *     insights: [...]
-   *   }
-   * }
-   *
-   * For this home panel we flatten them into one list.
-   */
-   const insightList = (insights?.insights || []);
+  const insightList = Array.isArray(insights?.insights) ? insights.insights : [];
+  const visibleInsights = insightList.slice(0, 6);
 
-   const handleRefresh = async () => {
-    if (refreshing || generating) return;
-    setRefreshing(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      await new Promise((resolve, reject) => {
-        generate(async () => {
-          try {
-            await fetchInsights(window); // refetch the CURRENT window after full regeneration
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        });
-      });
-      setLastRefreshed('Just now');
-    } catch (err) {
-      console.error('Failed to refresh AI insights:', err);
-    } finally {
-      setRefreshing(false);
-    }
+  // The generation hook manages progress/errors. Do not wrap its callback in
+  // a promise: start/poll failures do not call the completion callback.
+  const handleRefresh = () => {
+    if (generating) return;
+    generate(() => fetchInsights(window));
   };
 
   const error = generateError || fetchError;
@@ -183,7 +152,7 @@ export default function AiInsightsPanel({
               color: '#4338CA',
             }}
           >
-            Auto-updated
+            AI-generated
           </span>
         </div>
 
@@ -219,7 +188,7 @@ export default function AiInsightsPanel({
           </button>
 
           <ViewAllBtn
-            onClick={() => onNavigate?.('alerts')}
+            onClick={() => onNavigate?.('insights')}
           />
         </div>
       </div>
@@ -297,12 +266,18 @@ export default function AiInsightsPanel({
         </div>
       )}
 
+      {!!insightList.length && (
+        <p className="px-5 pt-3 text-xs text-slate-400">
+          Showing {visibleInsights.length} of {insightList.length} insights
+        </p>
+      )}
+
       {/* Cards */}
       {!!insightList.length && (
         <div className="flex gap-4 px-5 pb-5 pt-4 overflow-x-auto">
-          {insightList.map((insight) => (
+          {visibleInsights.map((insight, index) => (
             <InsightCard
-              key={insight.id}
+              key={insight.id || `${window}-${index}`}
               insight={insight}
               refreshing={refreshing || generating}
               onNavigate={onNavigate}
@@ -326,4 +301,3 @@ export default function AiInsightsPanel({
     </Card>
   )
 }
-

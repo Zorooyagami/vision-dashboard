@@ -1,12 +1,11 @@
 // src/hooks/useLiveStream.js
 import { useEffect, useRef, useState } from 'react'
 import { useProject } from '../context/ProjectContext'
+import { API_BASE_URL } from '../services/apiClient'
 
 const MAX_EVENTS = 300
 const SPARK_POINTS = 40
-import { API_BASE_URL } from '../services/apiClient'
-
-const API_BASE = `${API_BASE_URL}/api/admin`
+const API_BASE = '/api/admin'
 
 // Friendly names for what the SDK detects (deviceInfo.os / deviceInfo.browser)
 const OS_NAMES = { 'Mac OS': 'Mac', Windows: 'Windows', iOS: 'iOS', Android: 'Android', Linux: 'Linux', 'Chrome OS': 'ChromeOS' }
@@ -59,7 +58,7 @@ export function useLiveStream() {
       return ev
     }
 
-    const es = new EventSource(`${API_BASE}/live/stream?projectId=${encodeURIComponent(projectId)}`)
+    const es = new EventSource(`${API_BASE_URL}${API_BASE}/live/stream?projectId=${encodeURIComponent(projectId)}`)
     es.onopen = () => setStatus('live')
     es.onerror = () => setStatus('reconnecting')
 

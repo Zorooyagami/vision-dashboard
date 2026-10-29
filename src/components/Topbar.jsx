@@ -167,7 +167,7 @@ export default function Topbar({
                 </button>
               ))}
 
-              <div className="border-t px-3 py-2.5" style={{ borderColor: '#F1F5F9' }}>
+              {/* <div className="border-t px-3 py-2.5" style={{ borderColor: '#F1F5F9' }}>
                 <p className="text-[10px] font-semibold text-slate-400 tracking-widest mb-2">CUSTOM RANGE</p>
                 <div className="flex gap-2">
                   <input
@@ -196,7 +196,7 @@ export default function Topbar({
                 >
                   Apply
                 </button>
-              </div>
+              </div> */}
             </div>
           </>
         )}

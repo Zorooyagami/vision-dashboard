@@ -1,4 +1,4 @@
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://vision-engine.onrender.com')
+const rawBaseUrl = 'https://vision-backend-production-e072.up.railway.app'//import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://vision-engine.onrender.com')
 
 export const API_BASE_URL = rawBaseUrl.replace(/\/$/, '')
 
@@ -75,7 +75,6 @@ export async function apiRequest(
     }
 
     headers.set('X-Project-Id', projectId)
-
   }
 
   if (

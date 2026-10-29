@@ -18,7 +18,7 @@ import PersonasPage from './pages/Personas'
 import DecisionsPage from './pages/Decisions'
 import RevenuePage from './pages/Revenue'
 import RevenueOpportunityRadar from './pages/RevenueOpportunityRadar'
-import AlertsPage from './pages/Alerts'
+import InsightsPage from './pages/Insights'
 import ConversionPage from './pages/Conversion'
 import SettingsPage from './pages/Settings'
 import MetricsPage from './pages/Metrics'
@@ -347,9 +347,9 @@ function AuthenticatedApp() {
               />
 
               <Route
-                path="/alerts"
+                path="/insights"
                 element={
-                  <AlertsPage
+                  <InsightsPage
                     onNavigateSettings={() =>
                       navigateTo(
                         'settings',

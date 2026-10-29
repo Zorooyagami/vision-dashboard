@@ -24,10 +24,19 @@ export async function toggleEventStatus(name) {
   })
 }
 
-export async function createEvent({ name, description, category, tracking, status }) {
+export async function createEvent({ name, description, category, trigger }) {
   const data = await apiFetch(`${API_BASE}/events`, {
     method: 'POST',
-    body: JSON.stringify({ name, description, category, tracking, status }),
+    body: JSON.stringify({ name, description, category, ...(trigger ? { trigger } : {}) }),
+  })
+  return data?.event
+}
+
+// patch: any of { description, category, trigger }. trigger:null removes element tagging.
+export async function updateEvent(name, patch) {
+  const data = await apiFetch(`${API_BASE}/events/${encodeURIComponent(name)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
   })
   return data?.event
 }

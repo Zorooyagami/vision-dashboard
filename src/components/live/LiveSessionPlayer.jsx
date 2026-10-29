@@ -9,20 +9,23 @@ import { LiveBadge } from './liveShared'
 
 const API_BASE = '/api/record'
 const POLL_MS = 5000
-const TAIL_MS = 5000 // in live mode, start this far before the end
+const TAIL_MS = 2000 // in live mode, start this far before the end
 
 const fmtSpan = (secs) => `${Math.floor(secs / 60)}m ${secs % 60}s`
 
-export default function LiveSessionPlayer({ session, onClose }) {
+// liveSignal: changes every time the server reports a new chunk for this user, so we
+// fetch immediately instead of waiting for the next poll.
+export default function LiveSessionPlayer({ session, onClose, initialMode = 'start', liveSignal = null }) {
   const containerRef = useRef(null)
   const playerRef = useRef(null)
   const latestRef = useRef([])
   const shownRef = useRef(0)
-  const modeRef = useRef('start')
+  const modeRef = useRef(initialMode)
+  const refreshRef = useRef(() => {})
   const switchRef = useRef(() => {})
 
   const [status, setStatus] = useState('waiting') // waiting | ready | error
-  const [mode, setMode] = useState('start')
+  const [mode, setMode] = useState(initialMode)
   const [shown, setShown] = useState(0)
   const [available, setAvailable] = useState(0)
   const [span, setSpan] = useState(0) // seconds of recording loaded into the player
@@ -68,7 +71,12 @@ export default function LiveSessionPlayer({ session, onClose }) {
       rebuild(latestRef.current)
     }
 
+    let inflight = false
+    let queued = false
     const tick = async () => {
+      if (inflight) { queued = true; return } // a signal arrived mid-request: run once more after it
+      inflight = true
+      clearTimeout(timer)
       try {
         const res = await apiRequest(`${API_BASE}/${encodeURIComponent(session.sessionId)}`)
         if (!res.ok) throw new Error(`Status ${res.status}`)
@@ -84,9 +92,13 @@ export default function LiveSessionPlayer({ session, onClose }) {
         console.error('[LiveSessionPlayer] poll failed', err)
         if (!cancelled && !playerRef.current) setStatus('error')
       } finally {
-        if (!cancelled) timer = setTimeout(tick, POLL_MS)
+        inflight = false
+        if (!cancelled) {
+          if (queued) { queued = false; tick() } else timer = setTimeout(tick, POLL_MS)
+        }
       }
     }
+    refreshRef.current = () => { if (RRWebPlayer && !cancelled) tick() }
 
     import('rrweb-player').then((m) => {
       if (cancelled) return
@@ -101,6 +113,11 @@ export default function LiveSessionPlayer({ session, onClose }) {
       playerRef.current = null
     }
   }, [session.sessionId])
+
+  // New chunk reported by the server -> fetch now (the 5s poll stays as a fallback).
+  useEffect(() => {
+    if (liveSignal) refreshRef.current()
+  }, [liveSignal])
 
   const pending = mode === 'start' && available > shown
   const seg = (m, label) => (
