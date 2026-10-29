@@ -43,10 +43,14 @@ export default function ProjectsPage() {
 
         const result = await fetchProjects()
 
-        setProjects(result)
+        const projectList = Array.isArray(result) ? result : result?.projects
+        if (!Array.isArray(projectList)) {
+          throw new Error('Invalid projects response.')
+        }
+        setProjects(projectList)
 
         if (activeProjectId) {
-          const activeProject = result.find(
+          const activeProject = projectList.find(
             (project) => project.projectId === activeProjectId,
           )
 
@@ -467,7 +471,7 @@ function ProjectCard({
                 {project.name}
               </h2>
 
-              <p
+              {/* <p
                 className="
                   mt-0.5
                   truncate
@@ -476,7 +480,7 @@ function ProjectCard({
                 "
               >
                 {hostname}
-              </p>
+              </p> */}
 
             </div>
 
@@ -513,6 +517,11 @@ function ProjectCard({
             }
           </p>
         )}
+
+        <ProjectWebsites
+          websiteUrl={project.websiteUrl}
+          allowedOrigins={project.allowedOrigins}
+        />
 
         {/* PROJECT ID */}
 
@@ -662,7 +671,7 @@ function ProjectCard({
             disabled={deleting}
             onClick={onDelete}
             title="Delete project"
-            className=" hidden
+            className=" 
               rounded-lg
               border
               border-slate-200
@@ -894,6 +903,89 @@ function FeatureBadge({
 /* =========================================================
    HELPERS
 ========================================================= */
+
+function parseWebsite(value) {
+  if (typeof value !== 'string' || !value.trim()) return null
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol) ? url : null
+  } catch {
+    return null
+  }
+}
+
+function ProjectWebsites({ websiteUrl, allowedOrigins }) {
+  const website = parseWebsite(websiteUrl)
+  const origins = [...new Set(
+    (Array.isArray(allowedOrigins) ? allowedOrigins : [])
+      .filter((origin) => typeof origin === 'string' && origin.trim())
+      .map((origin) => origin.trim()),
+  )]
+
+  return (
+    <div className="mt-4 space-y-3">
+      <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-3.5">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+          Website URL
+        </p>
+        {website ? (
+          <a
+            href={website.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${websiteUrl} in a new tab`}
+            className="mt-1.5 flex min-w-0 items-start gap-2 rounded text-sm font-semibold leading-6 text-indigo-900 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            <span className="min-w-0 flex-1 break-all">{websiteUrl}</span>
+            <span aria-hidden="true" className="shrink-0">↗</span>
+          </a>
+        ) : (
+          <p className="mt-1.5 break-all text-sm text-slate-600">
+            {websiteUrl || 'No website configured'}
+          </p>
+        )}
+      </div>
+
+      {/* <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
+            Allowed origins
+          </p>
+          <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-600">
+            {origins.length}
+          </span>
+        </div>
+        {origins.length ? (
+          <ul className="mt-2.5 space-y-2">
+            {origins.map((origin) => {
+              const parsed = parseWebsite(origin)
+              const local = parsed && (
+                ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname) ||
+                parsed.hostname.endsWith('.localhost')
+              )
+              const primary = parsed && website && parsed.origin === website.origin
+              const badge = local ? 'Local development' : primary ? 'Primary website' : null
+              return (
+                <li key={origin} className="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5">
+                  {badge && (
+                    <span className={`mb-1.5 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold ${local ? 'bg-amber-50 text-amber-800' : 'bg-indigo-50 text-indigo-700'}`}>
+                      {badge}
+                    </span>
+                  )}
+                  <p className="break-all font-mono text-xs font-medium leading-5 text-slate-700">
+                    {origin}
+                  </p>
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <p className="mt-2 text-xs text-slate-500">No allowed origins configured.</p>
+        )}
+      </div> */}
+    </div>
+  )
+}
 
 function getInitial(name) {
   return (
