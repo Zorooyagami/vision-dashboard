@@ -60,9 +60,25 @@ export default function Live({ onNavigate }) {
   const [looking, setLooking] = useState(null)
   const [watchNote, setWatchNote] = useState(null)
 
+  // Analytics events of a guest carry no user id, only the SDK session id. The recorder
+  // shares that session id, so a recording can be matched to a feed row through it.
+  const recordingsBySession = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.values(recordings)
+          .filter((recording) => recording?.sessionId)
+          .map((recording) => [recording.sessionId, recording])
+      ),
+    [recordings]
+  )
+
   const recFor = (session) => {
     const userId = getReplayUserId(session)
-    return userId ? recordings[userId] : null
+    return (
+      (userId && recordings[userId]) ||
+      recordingsBySession[session.sessionId] ||
+      null
+    )
   }
 
   const openPlayer = (session, recordingSessionId) => {
@@ -80,21 +96,18 @@ export default function Live({ onNavigate }) {
     setWatchNote(null)
 
     const userId = getReplayUserId(session)
-
-    if (!userId) {
-      setWatchNote({
-        sessionId: session.sessionId,
-        text:
-          'This event has no visitor ID. The analytics SDK and recorder ' +
-          'must share the same guest ID to find its replay.',
-      })
-      return
-    }
-
     const recording = recFor(session)
 
     if (recording?.sessionId) {
       openPlayer(session, recording.sessionId)
+      return
+    }
+
+    // Guest with no live recording signal (recording not started yet, or the signal
+    // expired). Their recording uses the SDK session id, so open that id directly.
+    // The player keeps retrying until the recording exists.
+    if (!userId) {
+      openPlayer(session, session.sessionId)
       return
     }
 
@@ -151,8 +164,11 @@ export default function Live({ onNavigate }) {
     }
   }
 
-  const liveRec = watching?.userId
-    ? recordings[watching.userId]
+  // Live signal for whoever is being watched: by user id, or by session id for guests.
+  const liveRec = watching
+    ? (watching.userId && recordings[watching.userId]) ||
+      recordingsBySession[watching.sessionId] ||
+      null
     : null
 
   const liveRecordingSessionId = liveRec?.sessionId
@@ -393,11 +409,11 @@ export default function Live({ onNavigate }) {
                       type="button"
                       disabled={looking !== null}
                       title={
-                        !replayUserId
-                          ? 'Check recording availability'
-                          : recording?.sessionId
-                            ? 'Watch session'
-                            : "Look for this visitor's latest recording"
+                        recording?.sessionId
+                          ? 'Watch session'
+                          : replayUserId
+                            ? "Look for this visitor's latest recording"
+                            : 'Open this guest session’s recording'
                       }
                       onClick={() => handleWatch(session)}
                       className="shrink-0 rounded-lg border border-indigo-200 px-3 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-40"
