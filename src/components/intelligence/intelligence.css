@@ -45,11 +45,30 @@
   margin: 0;
 }
 .vi-heading p,
-.vi-cardhead p {
-  font-size: 12px;
-  color: var(--vi-muted);
-  line-height: 1.7;
-  margin: 6px 0 0;
+.vi-cardhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vi-titlerow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vi-viewmore {
+  font-weight: 600;
+  color: #5b3cf5;          /* match your accent colour, e.g. var(--vi-accent) */
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity .15s ease;
+}
+
+.vi-viewmore:hover {
+  opacity: .75;
+  text-decoration: underline;
 }
 .vi-nav {
   display: flex;
@@ -110,7 +129,7 @@
   gap: 14px;
 }
 .vi-home > .vi-cardhead {
-  padding: 21px 23px 6px;
+  padding: 20px 20px 6px;
 }
 .vi-card h2 {
   font-size: 16px;
@@ -128,7 +147,7 @@
   display: flex;
   align-items: flex-start;
   gap: 13px;
-  padding: 20px 23px;
+  padding: 15px 23px;
   text-decoration: none;
   border-bottom: 1px solid var(--vi-border);
   color: inherit;

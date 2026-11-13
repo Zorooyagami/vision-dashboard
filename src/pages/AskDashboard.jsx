@@ -52,7 +52,7 @@ export default function AskDashboard() {
       if (sequence.current === id) setRequest({ key: scopeKey, busy: false, error: timedOut ? 'This analysis took too long. Try a narrower date range or retry.' : error.name === 'AbortError' ? null : error.message })
     } finally { clearTimeout(timer) }
   }
-  return <Page title="Ask the dashboard" subtitle="Ask a question about your data in plain language.">
+  return <Page title="Ask Vivi" subtitle="Ask a question about your data in plain language.">
     <div className="ask-workspace">{!turns.length && <div className="ask-intro"><h2>What would you like to know?</h2><p>Ask about revenue, conversion, journeys or customer groups. Mention dates or devices to narrow the answer.</p><div className="ask-examples">{examples.map(([label, text]) => <button key={label} type="button" disabled={state.busy} onClick={() => ask(text, null)}><strong>{label}</strong><span>{text}</span><b aria-hidden="true">↗</b></button>)}</div></div>}
       {turns.length > 0 && <div className="ask-historyhead"><span>{turns.length} {turns.length === 1 ? 'answer' : 'answers'} in this conversation</span><button type="button" onClick={reset}>New conversation</button></div>}
       <div className="ask-conversation" aria-label="Question history">{turns.map(turn => <section key={turn.id} className="ask-turn" ref={turn === turns.at(-1) ? latest : null}><div className="ask-question"><span>You asked</span><p>{turn.question}</p></div><AnswerCard answer={turn.answer} busy={state.busy} onAsk={ask} /></section>)}</div>

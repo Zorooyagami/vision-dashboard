@@ -111,6 +111,7 @@ function JourneysTab() {
     period,
     customRange,
     selectedPersonas,
+    device,
   } = useFilters()
 
   const [personaFilter, setPersonaFilter] = useState(null)
@@ -136,6 +137,7 @@ function JourneysTab() {
     customRange,
     platform,
     selectedPersonas: effectivePersonas,
+    device,
   }
 
   /* =======================================================

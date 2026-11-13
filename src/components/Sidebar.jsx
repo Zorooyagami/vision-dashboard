@@ -38,47 +38,22 @@ function AudienceIcon() {
 }
 
 const NAV = [
-  {
-    label: 'OVERVIEW',
-    items: [
-      { id: 'home', label: 'Home', icon: HomeIcon },
-      { id: 'projects', label: 'Projects', icon: ProjectsIcon },
-    ],
-  },
-  {
-    label: 'ANALYTICS',
-    items: [
-      { id: 'conversion', label: 'Conversion', icon: FunnelIcon },
-      { id: 'explore', label: 'Explore', icon: ExploreIcon },
-      { id: 'revenue', label: 'Revenue', icon: RevenueIcon },
-      { id: 'opportunities', label: 'Opportunity Radar', icon: RevenueIcon },
-      { id: 'products', label: 'Product Intelligence', icon: ProjectsIcon },
-      { id: 'audience', label: 'Audience Intelligence', icon: AudienceIcon },
-      { id: 'personas', label: 'Personas', icon: PersonasIcon },
-    ],
-  },
-  {
-    label: 'INTELLIGENCE',
-    items: [
-      { id: 'at-a-glance', label: 'At a glance', icon: HomeIcon },
-      { id: 'ask-dashboard', label: 'Ask the dashboard', icon: ExploreIcon },
-      { id: 'revenue-investigator', label: 'Revenue investigator', icon: RevenueIcon },
-      { id: 'journey-comparison', label: 'Journey comparison', icon: FunnelIcon },
-    ],
-  },
-  {
-    label: 'TOOLS',
-    items: [
-      { id: 'tools', label: 'Behavior', icon: BehaviorIcon },
-      // { id: 'decisions', label: 'Decisions', icon: DecisionIcon },
-      // { id: 'alerts', label: 'Alerts & Insights', icon: AlertIcon },
-    ],
-  },
-  // {
-  //   label: 'ADMIN',
-  //   items: [{ id: 'settings', label: 'Settings', icon: SettingsIcon }],
-  // },
+  { label: 'WORKSPACE', items: [
+    { id: 'projects', label: 'Projects', icon: ProjectsIcon },
+    { id: 'home', label: 'Project Overview', icon: HomeIcon },
+    { id: 'revenue', label: 'Revenue', icon: RevenueIcon },
+    { id: 'explore', label: 'Explore', icon: ExploreIcon },
+    { id: 'tools', label: 'Behavior', icon: BehaviorIcon },
+    { id: 'personas', label: 'Personas', icon: PersonasIcon },
+    { id: 'ask-dashboard', label: 'Ask Vivi', icon: ExploreIcon },
+    { id: 'products-audience', label: 'Products & Audience', icon: AudienceIcon },
+  ] },
 ]
+const ACTIVE_GROUP = {
+  opportunities: 'revenue', 'revenue-investigator': 'revenue',
+  conversion: 'explore', 'journey-comparison': 'explore',
+  products: 'products-audience', audience: 'products-audience',
+}
 
 export default function Sidebar({ active, onNavigate }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -131,7 +106,7 @@ export default function Sidebar({ active, onNavigate }) {
             {collapsed && <div className="h-px mx-1 mb-2" style={{ background: '#1E2230' }} />}
             <ul className="space-y-0.5">
               {section.items.map(item => {
-                const isActive = active === item.id
+                const isActive = active === item.id || ACTIVE_GROUP[active] === item.id
                 return (
                   <li key={item.id} className="relative group">
                     <button

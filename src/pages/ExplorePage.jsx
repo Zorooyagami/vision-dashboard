@@ -1,49 +1,45 @@
-import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import EventsTab from '../components/explore/events/EventsTab'
 import FunnelsTab from '../components/explore/funnels/FunnelsTab'
 import QueryBuilderTab from '../components/explore/query/QueryBuilderTab'
 import JourneysTab from '../components/explore/journeys/JourneysTab'
 import UsersTab from '../components/explore/users/UsersTab'
-
+import ConversionPage from './Conversion'
+import JourneyComparison from './JourneyComparison'
 
 const TABS = [
-  { id: 'events',   label: 'Events' },
-  { id: 'users',  label: 'Users' },
-  { id: 'funnels',  label: 'Funnels' },
-  { id: 'query',    label: 'Query Builder' },
-  { id: 'journeys', label: 'Journeys' },
+  { path: '/explore', label: 'Events' },
+  { path: '/explore/users', label: 'Users' },
+  { path: '/explore/funnels', label: 'Funnels' },
+  { path: '/explore/query', label: 'Query Builder' },
+  { path: '/explore/journey', label: 'Journey' },
 ]
-
-export default function ExplorePage({ platform, selectedPersonas }) {
-  const [tab, setTab] = useState('events')
-
-  return (
-    <div className="flex flex-col h-full overflow-hidden">
-      {/* Sub-nav */}
-      <div className="bg-white border-b shrink-0" style={{ borderColor: '#E2E8F0' }}>
-        <div className="flex items-center gap-0 overflow-x-auto px-3 sm:px-6">
-          {TABS.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className="px-4 py-3.5 text-sm font-semibold transition-colors relative"
-              style={{ color: tab === t.id ? '#6366F1' : '#64748B' }}
-            >
-              {t.label}
-              {tab === t.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: '#6366F1' }} />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Tab content */}
-      {tab === 'events'   && <EventsTab />}
-      {tab === 'users'   && <UsersTab />}
-      {tab === 'funnels'  && <FunnelsTab />}
-      {tab === 'query'    && <QueryBuilderTab />}
-      {tab === 'journeys' && <JourneysTab selectedPersonas={selectedPersonas} />}
-    </div>
-  )
+const SUBTABS = {
+  '/explore/funnels': [
+    {path:'/explore/funnels',label:'Conversion Funnel'},
+    {path:'/explore/funnels/custom',label:'Custom Funnels'},
+  ],
+  '/explore/journey': [
+    {path:'/explore/journey',label:'Journey Comparison'},
+    {path:'/explore/journey/flow',label:'Customer Journey Flow'},
+  ],
+}
+export default function ExplorePage() {
+ const location=useLocation(),navigate=useNavigate(),path=location.pathname
+ const group=path.startsWith('/explore/funnels')?'/explore/funnels':path.startsWith('/explore/journey')?'/explore/journey':path
+ return <div className="flex flex-col min-h-full">
+  <nav aria-label="Explore tabs" className="flex flex-wrap border-b bg-white px-3 sm:px-6">
+   {TABS.map(t=><button key={t.path} type="button" onClick={()=>navigate(t.path)} className={`px-4 py-3 text-sm font-semibold border-b-2 ${group===t.path?'border-indigo-500 text-indigo-600':'border-transparent text-slate-500'}`}>{t.label}</button>)}
+  </nav>
+  {SUBTABS[group] && <nav aria-label={`${group==='/explore/funnels'?'Funnels':'Journey'} sub-tabs`} className="flex flex-wrap gap-2 bg-white px-4 py-2 border-b border-slate-100">
+   {SUBTABS[group].map(t=><button type="button" key={t.path} onClick={()=>navigate(t.path)} className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${path===t.path?'bg-indigo-50 text-indigo-600':'text-slate-500 hover:bg-slate-100'}`}>{t.label}</button>)}
+  </nav>}
+  {path==='/explore' && <EventsTab />}
+  {path==='/explore/users' && <UsersTab />}
+  {path==='/explore/funnels' && <ConversionPage />}
+  {path==='/explore/funnels/custom' && <FunnelsTab />}
+  {path==='/explore/query' && <QueryBuilderTab />}
+  {path==='/explore/journey' && <JourneyComparison />}
+  {path==='/explore/journey/flow' && <JourneysTab />}
+ </div>
 }

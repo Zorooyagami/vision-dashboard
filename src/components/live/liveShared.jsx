@@ -148,7 +148,7 @@ export function FeedRow({ ev, now }) {
           <span className="font-semibold">{who(ev)}</span> <span className="text-slate-500">{describe(ev)}</span>
         </p>
         <p className="truncate text-xs text-slate-400">
-          {[ev.path, ev.device].filter(Boolean).join(' · ')}
+          {[ev.path, ev.device, [ev.city, ev.country].filter(Boolean).join(', ') || 'Location unavailable'].filter(Boolean).join(' · ')}
         </p>
       </div>
       <span className="shrink-0 text-xs text-slate-400">{timeAgo(ev.ts, now)}</span>

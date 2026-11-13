@@ -37,6 +37,9 @@ import RevenueInvestigator from './pages/RevenueInvestigator'
 import JourneyComparison from './pages/JourneyComparison'
 import ProductIntelligence from './pages/ProductIntelligence'
 import AudienceIntelligence from './pages/AudienceIntelligence'
+import RevenueSection from './pages/RevenueSection'
+import ProductsAudienceSection from './pages/ProductsAudienceSection'
+import ViviBubble from './components/ask/ViviBubble'
 
 import {
   FiltersProvider,
@@ -49,17 +52,17 @@ import {
 } from './context/ProjectContext'
 
 const SCREEN_TITLES = {
-  home: 'Overview',
+  home: 'Project Overview',
   'at-a-glance': 'At a glance',
-  'ask-dashboard': 'Ask the dashboard',
+  'ask-dashboard': 'Ask Vivi',
   'revenue-investigator': 'Revenue investigator',
   'journey-comparison': 'Journey comparison',
   personas: 'Personas Explorer',
   decisions: 'Decision Tracking',
-  revenue: 'Revenue by Persona',
+  revenue: 'Revenue',
   opportunities: 'Revenue Opportunity Radar',
-  products: 'Product Intelligence',
-  audience: 'Audience Intelligence',
+  products: 'Products & Audience',
+  audience: 'Products & Audience',
   alerts: 'Alerts & Insights',
   conversion: 'Conversion Funnel',
   settings: 'Settings',
@@ -68,6 +71,7 @@ const SCREEN_TITLES = {
   explore: 'Explore',
   projects: 'Projects',
   live: 'Live',
+  'products-audience': 'Products & Audience',
 }
 
 /* =========================================================
@@ -281,13 +285,16 @@ function AuthenticatedApp() {
                 }
               />
 
-              <Route
-                              path="/at-a-glance" element={<AtAGlancePage />} />
-                            <Route path="/ask-dashboard" element={<AskDashboard />} />
-                            <Route path="/revenue-investigator" element={<RevenueInvestigator />} />
-                            <Route path="/journey-comparison" element={<JourneyComparison />} />
-                            <Route path="/products" element={<ProductIntelligence />} />
-                            <Route path="/audience" element={<AudienceIntelligence />} />
+              <Route path="/at-a-glance" element={<AtAGlancePage />} />
+              <Route path="/ask-dashboard" element={<AskDashboard />} />
+              <Route path="/revenue-investigator" element={<Navigate to="/revenue/investigator" replace />} />
+              <Route path="/journey-comparison" element={<Navigate to="/explore/journey" replace />} />
+              <Route path="/products" element={<Navigate to="/products-audience" replace />} />
+              <Route path="/audience" element={<Navigate to="/products-audience/audience" replace />} />
+              <Route path="/products-audience" element={<ProductsAudienceSection />}>
+                <Route index element={<ProductIntelligence />} />
+                <Route path="audience" element={<AudienceIntelligence />} />
+              </Route>
                             <Route path="/live"
                               element={<Live onNavigate={onNavigate} />}
                             />
@@ -327,25 +334,12 @@ function AuthenticatedApp() {
                 }
               />
 
-              <Route
-                path="/opportunities"
-                element={<RevenueOpportunityRadar />}
-              />
-
-              <Route
-                path="/revenue"
-                element={
-                  <RevenuePage
-                    platform={
-                      platform
-                    }
-                    selectedPersonas={
-                      selectedPersonas
-                    }
-                  />
-                }
-              />
-
+              <Route path="/opportunities" element={<Navigate to="/revenue/opportunity-radar" replace />} />
+              <Route path="/revenue" element={<RevenueSection />}>
+                <Route index element={<RevenuePage />} />
+                <Route path="opportunity-radar" element={<RevenueOpportunityRadar />} />
+                <Route path="investigator" element={<RevenueInvestigator />} />
+              </Route>
               <Route
                 path="/insights"
                 element={
@@ -366,20 +360,7 @@ function AuthenticatedApp() {
                 }
               />
 
-              <Route
-                path="/conversion"
-                element={
-                  <ConversionPage
-                    platform={
-                      platform
-                    }
-                    selectedPersonas={
-                      selectedPersonas
-                    }
-                  />
-                }
-              />
-
+              <Route path="/conversion" element={<Navigate to="/explore/funnels" replace />} />
               <Route
                 path="/settings"
                 element={
@@ -405,20 +386,7 @@ function AuthenticatedApp() {
                 }
               />
 
-              <Route
-                path="/explore"
-                element={
-                  <ExplorePage
-                    platform={
-                      platform
-                    }
-                    selectedPersonas={
-                      selectedPersonas
-                    }
-                  />
-                }
-              />
-
+              <Route path="/explore/*" element={<ExplorePage />} />
               <Route
                 path="/tools/*"
                 element={
@@ -469,7 +437,7 @@ function AuthenticatedApp() {
 
           </Routes>
         </main>
-
+        {projectId && <ViviBubble />}
       </div>
     </div>
   )

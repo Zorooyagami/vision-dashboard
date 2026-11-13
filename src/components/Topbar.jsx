@@ -22,6 +22,8 @@ function formatDate(iso) {
 export default function Topbar({
   platform,
   onPlatformChange,
+  device,
+  onDeviceChange,
   selectedPersonas,
   onPersonasChange,
   title,
@@ -71,12 +73,12 @@ export default function Topbar({
       : `${selectedPersonas.length} Personas`
 
   const searchItems = [
-    { label: 'Overview', path: '/home' },
-    { label: 'Conversion Funnel', path: '/conversion' },
+    { label: 'Project Overview', path: '/home' },
+    { label: 'Conversion Funnel', path: '/explore/funnels' },
     { label: 'Explore', path: '/explore' },
     { label: 'Revenue by Persona', path: '/revenue' },
-    { label: 'Revenue Opportunity Radar', path: '/opportunities' },
-    { label: 'Personas Explorer', path: '/personas' },
+    { label: 'Revenue Opportunity Radar', path: '/revenue/opportunity-radar' },
+    { label: 'Products & Audience', path: '/products-audience' },
     { label: 'Behavior', path: '/tools' },
     { label: 'Decision Tracking', path: '/decisions' },
     { label: 'Alerts & Insights', path: '/alerts' },
@@ -220,6 +222,8 @@ export default function Topbar({
         ))}
       </div>
 
+      {/* Device filter: one selector shared by conversion, journeys and intelligence. */}
+     
       {/* ---------- Persona filter ---------- */}
       <div className="relative">
         <button

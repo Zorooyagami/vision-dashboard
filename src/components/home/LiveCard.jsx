@@ -8,7 +8,7 @@ export default function LiveCard({ onNavigate }) {
   const perMin = events.filter((e) => now - e.ts < 60000).length
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 h-full">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <p className="text-base font-bold text-slate-900">Live now</p>
@@ -36,7 +36,7 @@ export default function LiveCard({ onNavigate }) {
           {events.length === 0 ? (
             <p className="py-6 text-center text-xs text-slate-400">Waiting for activity…</p>
           ) : (
-            events.slice(0, 6).map((ev) => <FeedRow key={ev.id} ev={ev} now={now} />)
+            events.slice(0, 4).map((ev) => <FeedRow key={ev.id} ev={ev} now={now} />)
           )}
         </div>
       </div>

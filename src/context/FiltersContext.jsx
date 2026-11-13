@@ -20,6 +20,7 @@ export function FiltersProvider({ children }) {
 
   const value = {
     platform, setPlatform, intelligenceDevice, setIntelligenceDevice,
+    device: intelligenceDevice, setDevice: setIntelligenceDevice,
     selectedPersonas, setSelectedPersonas,
     period, onPeriodChange,
     customRange,

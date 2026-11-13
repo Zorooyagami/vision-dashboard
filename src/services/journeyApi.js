@@ -7,7 +7,7 @@ function buildParams({ period, customRange, platform, selectedPersonas, device }
   params.set('period', period || '30d')
   params.set('platform', platform || 'combined')
   if (selectedPersonas?.length) params.set('personas', selectedPersonas.join(','))
-  if (device) params.set('device', device)
+  if (device && device !== 'all') params.set('device', device)
   if (period === 'custom' && customRange?.from && customRange?.to) {
     params.set('from', customRange.from)
     params.set('to', customRange.to)

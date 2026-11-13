@@ -13,12 +13,16 @@ export default function TopbarHost({ title = 'Overview', showFilters = true }) {
     period,
     onPeriodChange,
     customRange,
+    intelligenceDevice,
+    setIntelligenceDevice,
   } = useFilters()
   const { projectId, projectName } = useProject()
 
   return (
     <Topbar
       title={title}
+      device={intelligenceDevice}
+      onDeviceChange={setIntelligenceDevice}
       showFilters={showFilters}
       projectId={projectId}
       projectName={projectName}

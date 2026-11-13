@@ -6,7 +6,6 @@ import { useJourneyPaths } from '../hooks/useJourneyPaths'
 import { usePathDetail } from '../hooks/usePathDetail'
 
 export default function ConversionPage() {
-  const [filterPersona, setFilterPersona] = useState(null)
   const [selectedFunnel, setSelectedFunnel] = useState('direct')
   const [activeStep, setActiveStep] = useState(null)
   const [expandedPath, setExpandedPath] = useState(null)
@@ -19,9 +18,7 @@ export default function ConversionPage() {
     device,
   } = useFilters()
 
-  const effectivePersonas = filterPersona
-    ? [filterPersona]
-    : selectedPersonas
+  const effectivePersonas = selectedPersonas
 
   const filters = {
     period,
@@ -63,8 +60,8 @@ export default function ConversionPage() {
    * Persona helpers
    * -------------------------------------------------- */
 
-  const selectedPersona = filterPersona
-    ? PERSONAS.find((p) => p.id === filterPersona)
+  const selectedPersona = selectedPersonas.length === 1
+    ? PERSONAS.find((p) => p.id === selectedPersonas[0])
     : null
 
   const selectedPersonaName = selectedPersona?.name
@@ -73,17 +70,6 @@ export default function ConversionPage() {
     selectedPersona?.name
       ?.toLowerCase()
       .includes('guest') || false
-
-  /*
-   * Collectors should remain available elsewhere in
-   * the dashboard, but not in the Funnel persona filter.
-   */
-  const funnelPersonas = PERSONAS.filter(
-    (p) =>
-      !p.name
-        ?.toLowerCase()
-        .includes('collector')
-  )
 
   /* --------------------------------------------------
    * Selected funnel
@@ -183,102 +169,6 @@ export default function ConversionPage() {
           Understand how sessions progress through your
           key conversion journeys
         </p>
-      </div>
-
-      {/* ==================================================
-          PERSONA FILTER
-      ================================================== */}
-
-      <div
-        className="bg-white rounded-2xl p-4"
-        style={{
-          boxShadow:
-            '0 1px 3px rgba(15,23,42,0.06)',
-        }}
-      >
-        <p className="text-xs font-semibold text-slate-500 mb-2.5">
-          Filter Funnel by Persona
-        </p>
-
-        <div className="flex flex-wrap gap-2">
-
-          {/* All Personas */}
-
-          <button
-            onClick={() =>
-              setFilterPersona(null)
-            }
-            className="px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all"
-            style={{
-              borderColor:
-                filterPersona === null
-                  ? '#6366F1'
-                  : '#E2E8F0',
-
-              background:
-                filterPersona === null
-                  ? '#EEF2FF'
-                  : 'transparent',
-
-              color:
-                filterPersona === null
-                  ? '#6366F1'
-                  : '#64748B',
-            }}
-          >
-            All Personas
-          </button>
-
-          {/* Personas - Collectors excluded */}
-
-          {funnelPersonas.map((p) => (
-            <button
-              key={p.id}
-              onClick={() =>
-                setFilterPersona((prev) =>
-                  prev === p.id
-                    ? null
-                    : p.id
-                )
-              }
-            >
-              <span
-                className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border transition-all"
-                style={{
-                  background:
-                    filterPersona === p.id
-                      ? p.lightBg
-                      : 'transparent',
-
-                  color:
-                    filterPersona === p.id
-                      ? p.textColor
-                      : '#64748B',
-
-                  borderColor:
-                    filterPersona === p.id
-                      ? p.color
-                      : '#E2E8F0',
-
-                  boxShadow:
-                    filterPersona === p.id
-                      ? `0 0 0 1px ${p.color}`
-                      : 'none',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '10px',
-                  }}
-                >
-                  {p.icon}
-                </span>
-
-                {p.name}
-              </span>
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* ==================================================
