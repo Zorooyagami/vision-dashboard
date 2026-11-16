@@ -64,7 +64,7 @@ function InsightsList({ onNavigateDecisions, insightWindow }) {
   const visible = active.filter(insight => filter === 'all' || sentimentOf(insight) === filter)
   const hidden = list.filter(insight => dismissed.has(insight.key))
   const problem = generateError || error
-  const refresh = () => { if (!generating) generate(() => fetchInsights(insightWindow)) }
+  const refresh = () => { if (!generating) generate(() => fetchInsights(insightWindow), insightWindow) }
 
   return <div className="space-y-5 p-4 sm:p-6">
     {detail && <InsightDetails insight={detail} onClose={() => setDetail(null)} onCreateDecision={onNavigateDecisions} />}
@@ -76,6 +76,8 @@ function InsightsList({ onNavigateDecisions, insightWindow }) {
     <div className="flex flex-wrap items-center gap-2" aria-label="Filter insights">{['all', ...Object.keys(SENTIMENT)].map(value => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${filter === value ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 bg-white text-slate-600'}`}>{value === 'all' ? `All (${active.length})` : SENTIMENT[value].label}</button>)}</div>
     {problem && <div role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-700">Unable to load or generate insights. {problem}<button className="ml-3 underline" onClick={() => fetchInsights(insightWindow)}>Retry loading</button></div>}
     {loading && <p role="status" className="py-8 text-center text-sm text-slate-500">Loading insights…</p>}
+    {insights?.mode === 'rules' && <p className="rounded-xl bg-slate-50 p-3 text-xs text-slate-700">Evidence-based observations — AI generation was unavailable for this report.</p>}
+    {insights?.notice && <p className="rounded-xl bg-indigo-50 p-3 text-xs text-indigo-700">{insights.notice}</p>}
     {!loading && !problem && !list.length && <div className="rounded-2xl bg-white p-10 text-center"><h2 className="font-semibold text-slate-700">No insights available</h2><p className="mt-2 text-sm text-slate-500">Generate insights for this project to get started.</p></div>}
     {!loading && list.length > 0 && <p className="text-xs text-slate-500">Showing {visible.length} of {list.length} insights{hidden.length ? ` · ${hidden.length} dismissed for this visit` : ''}</p>}
     {!loading && list.length > 0 && !visible.length && <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">No insights match this filter.</p>}

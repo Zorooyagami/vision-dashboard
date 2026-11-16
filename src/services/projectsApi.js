@@ -1,3 +1,4 @@
+//admin/src/services/projectsApi.js
 import { apiFetch } from './apiClient'
 
 const BASE_URL = '/api/admin/projects'
@@ -33,7 +34,7 @@ export async function updateProject(projectId, updates) {
   const data = await apiFetch(
     `${BASE_URL}/${encodeURIComponent(projectId)}`,
     {
-      method: 'PATCH',
+      method: 'PUT',   // was 'PATCH'
       body: JSON.stringify(updates),
       projectScoped: false,
     },

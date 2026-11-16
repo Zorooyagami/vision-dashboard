@@ -3,7 +3,7 @@ import { useFilters } from '../context/FiltersContext'
 import { fetchProductIntelligence } from '../services/productIntelligenceApi'
 import './ProductIntelligence.css'
 
-const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value) || 0)
+const money = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(value) || 0)
 const number = (value) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Number(value) || 0)
 const shortNumber = (value) => new Intl.NumberFormat('en-IN', { notation: 'compact', maximumFractionDigits: 1 }).format(Number(value) || 0)
 
@@ -13,7 +13,7 @@ function Icon({ name, size = 18 }) {
     search: <><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></>,
     eye: <><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></>,
     cart: <><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M2 3h2l2.5 12.2a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6L22 8H5"/></>,
-    rupee: <><path d="M5 4h14M5 8h14M5 4c8 0 8 8 0 8h1l9 8"/></>,
+    dollar: <><path d="M12 2v20M17 5.5C15.7 4.5 14 4 12 4c-3.3 0-5.5 1.6-5.5 4.2 0 6 11 2.4 11 8.5 0 2.6-2.2 4.3-5.5 4.3-2.2 0-4.2-.7-5.7-2"/></>,
     arrow: <><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></>,
     refresh: <><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9a7 7 0 0 1 11.8-2L20 12M4 12l2.6 5a7 7 0 0 0 11.8-2"/></>,
     alert: <><path d="M12 3 2.8 19h18.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></>,
@@ -79,7 +79,7 @@ export default function ProductIntelligence() {
 
     <div className="pi-metrics-grid">
       <MetricCard label="Units sold" value={loading ? '—' : number(metrics.unitsSold)} note={`${number(metrics.orders)} orders with product line items`} icon="cart" tone="purple"/>
-      <MetricCard label="Product revenue" value={loading ? '—' : money(metrics.productRevenue)} note="Calculated from purchase line items" icon="rupee" tone="green"/>
+      <MetricCard label="Product revenue" value={loading ? '—' : money(metrics.productRevenue)} note="Calculated from purchase line items" icon="dollar" tone="green"/>
       <MetricCard label="Product views" value={loading ? '—' : number(metrics.productViews)} note={`${number(metrics.uniqueViewers)} unique viewers`} icon="eye" tone="blue"/>
       <MetricCard label="Search activity" value={loading ? '—' : number(metrics.searches)} note={`${number(metrics.uniqueSearchers)} unique searchers`} icon="search" tone="amber"/>
     </div>

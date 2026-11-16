@@ -18,7 +18,7 @@ export function useGenerateInsights() {
   useEffect(() => stopPolling, [stopPolling])
 
   const generate = useCallback(
-    async (onComplete) => {
+    async (onComplete, window = '30d') => {
       setError(null)
       setGenerating(true)
       stopPolling()
@@ -26,6 +26,7 @@ export function useGenerateInsights() {
       try {
         const startResponse = await apiRequest(`${API_BASE}/insights/generate`, {
           method: 'POST',
+          body: JSON.stringify({ window }),
         })
 
         // 409 means generation is already running; polling should continue.
@@ -40,20 +41,21 @@ export function useGenerateInsights() {
 
       pollRef.current = setInterval(async () => {
         try {
-          const response = await apiRequest(`${API_BASE}/insights/status`)
+          const response = await apiRequest(`${API_BASE}/insights/status?window=${encodeURIComponent(window)}`)
           if (!response.ok) throw new Error('Unable to check generation status')
 
-          const { inProgress } = await response.json()
+          const { inProgress, error: jobError } = await response.json()
+          if (jobError) throw new Error(jobError)
 
           if (!inProgress) {
             stopPolling()
             setGenerating(false)
             onComplete?.()
           }
-        } catch {
+        } catch (err) {
           stopPolling()
           setGenerating(false)
-          setError('Lost connection while checking status')
+          setError(err.message || 'Lost connection while checking status')
         }
       }, 3000)
     },

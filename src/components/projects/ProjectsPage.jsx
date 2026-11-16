@@ -1,3 +1,4 @@
+//admin/src/components/projects/ProjectsPage.jsx
 import {
   useCallback,
   useEffect,
@@ -10,6 +11,7 @@ import { useProject } from '../../context/ProjectContext'
 import {
   fetchProjects,
   deleteProject,
+  updateProject,
 } from '../../services/projectsApi'
 
 export default function ProjectsPage() {
@@ -27,6 +29,8 @@ export default function ProjectsPage() {
 
   const [deletingId, setDeletingId] =
     useState(null)
+
+  const [editingProject, setEditingProject] = useState(null)
 
   const [copiedId, setCopiedId] =
     useState(null)
@@ -148,6 +152,13 @@ export default function ProjectsPage() {
         setDeletingId(null)
       }
     }
+
+  async function handleSaveProject(updates) {
+    const saved = await updateProject(editingProject.projectId, updates)
+    setProjects(items => items.map(item => item.projectId === saved.projectId ? saved : item))
+    if (activeProjectId === saved.projectId) selectProject(saved)
+    setEditingProject(null)
+  }
 
   /* =======================================================
      LOADING
@@ -358,6 +369,7 @@ export default function ProjectsPage() {
                     project.projectId
                   )
                 }
+                onEdit={() => setEditingProject(project)}
                 onDelete={() =>
                   handleDelete(
                     project
@@ -370,6 +382,10 @@ export default function ProjectsPage() {
         </div>
       )}
 
+      {editingProject && (
+        <EditProjectDialog project={editingProject}
+          onClose={() => setEditingProject(null)} onSave={handleSaveProject} />
+      )}
     </div>
   )
 }
@@ -385,6 +401,7 @@ function ProjectCard({
   onOpen,
   onCopy,
   onDelete,
+  onEdit,
   active = false,
 }) {
   const connected =
@@ -665,6 +682,10 @@ function ProjectCard({
         </div>
 
         <div className="flex items-center gap-2">
+          <button type="button" onClick={onEdit}
+            className="rounded-lg border border-indigo-200 bg-white px-3 py-2 text-xs font-semibold text-indigo-600 hover:bg-indigo-50">
+            Edit
+          </button>
 
           <button
             type="button"
@@ -1059,4 +1080,63 @@ function formatRelativeTime(value) {
     )
 
   return `${days}d ago`
+}
+function EditProjectDialog({ project, onClose, onSave }) {
+  const [form, setForm] = useState({
+    name: project.name || '', description: project.description || '',
+    websiteUrl: project.websiteUrl || '',
+    allowedOrigins: (project.allowedOrigins || []).join('\n'),
+    analytics: project.settings?.analytics !== false,
+    heatmaps: project.settings?.heatmaps !== false,
+    sessionReplay: project.settings?.sessionReplay !== false,
+    status: project.status || 'active',
+  })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const field = (key, value) => setForm(previous => ({ ...previous, [key]: value }))
+  async function submit(event) {
+    event.preventDefault()
+    try {
+      setSaving(true); setError('')
+      await onSave({ name: form.name.trim(), description: form.description.trim(),
+        websiteUrl: form.websiteUrl.trim(),
+        allowedOrigins: form.allowedOrigins.split(/[\n,]+/).map(s => s.trim()).filter(Boolean),
+        settings: { analytics: form.analytics, heatmaps: form.heatmaps, sessionReplay: form.sessionReplay },
+        status: form.status,
+      })
+    } catch(err) { setError(err.message || 'Could not save project') }
+    finally { setSaving(false) }
+  }
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4" role="presentation">
+      <form onSubmit={submit} role="dialog" aria-modal="true" aria-label="Edit project"
+        className="w-full max-w-xl space-y-4 rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-auto">
+        <h2 className="text-xl font-bold text-slate-900">Edit project</h2>
+        <p className="text-xs text-slate-500">Project ID: {project.projectId} (cannot be changed)</p>
+        {[['name','Project name'],['websiteUrl','Website URL']].map(([key,label]) =>
+          <label key={key} className="block text-sm font-medium text-slate-700">{label}
+            <input required value={form[key]} onChange={e=>field(key,e.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 p-2" /></label>
+        )}
+        <label className="block text-sm font-medium text-slate-700">Description
+          <textarea value={form.description} maxLength={500} onChange={e=>field('description',e.target.value)}
+            className="mt-1 w-full rounded-lg border border-slate-300 p-2" /></label>
+        <label className="block text-sm font-medium text-slate-700">Allowed origins (one per line)
+          <textarea value={form.allowedOrigins} onChange={e=>field('allowedOrigins',e.target.value)} rows={3}
+            className="mt-1 w-full rounded-lg border border-slate-300 p-2 font-mono text-xs" /></label>
+        <fieldset className="space-y-2"><legend className="text-sm font-semibold">Tracking features</legend>
+          {[['analytics','Analytics'],['heatmaps','Heatmaps'],['sessionReplay','Session Replay']].map(([key,label]) =>
+            <label key={key} className="flex gap-2 text-sm"><input type="checkbox" checked={form[key]}
+              onChange={e=>field(key,e.target.checked)} />{label}</label>)}</fieldset>
+        <label className="block text-sm font-medium">Status
+          <select className="ml-3 rounded border p-1" value={form.status} onChange={e=>field('status',e.target.value)}>
+            <option value="active">Active</option><option value="disabled">Disabled</option>
+          </select></label>
+        {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+        <div className="flex justify-end gap-3"><button type="button" onClick={onClose} className="rounded-lg border px-4 py-2">Cancel</button>
+          <button type="submit" disabled={saving} className="rounded-lg bg-indigo-600 px-4 py-2 text-white disabled:opacity-50">
+            {saving ? 'Saving…' : 'Save changes'}</button></div>
+      </form>
+    </div>
+  )
 }

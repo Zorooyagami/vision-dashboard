@@ -19,7 +19,7 @@ export function getOpportunities(filters) {
 
 export function updateOpportunity(key, status, note = '') {
   return apiFetch(`/api/opportunities/${encodeURIComponent(key)}/status`, {
-    method: 'PATCH',
+    method: 'PUT',
     body: JSON.stringify({ status, note }),
   })
 }

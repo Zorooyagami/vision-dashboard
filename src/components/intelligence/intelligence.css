@@ -733,3 +733,11 @@
 .vi-askform input::placeholder {
   color: var(--vi-muted);
 }
+
+/* Home summary is a short navigation teaser, not a full intelligence report */
+.vi-home-compact>.vi-cardhead{padding:13px 16px 7px}
+.vi-home-compact .vi-fact{padding:11px 16px;gap:10px;align-items:center}
+.vi-home-compact .vi-fact strong{font-size:12px}
+.vi-home-compact .vi-fact p{font-size:11px;line-height:1.35;margin:2px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vi-home-compact .vi-icon{height:29px;width:29px;flex:none}
+.vi-home-compact .vi-facts .vi-fact:last-child{border-bottom:0}

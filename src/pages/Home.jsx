@@ -43,7 +43,7 @@ export default function Home({ decisions, onNavigate, onLogDecision }) {
   return (
     <div className="space-y-5 p-4 sm:p-6">
       <KpiRow kpis={cards} loading={loading} error={error} />
-      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2 [&>*]:min-w-0">
+      <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-2 [&>*]:min-w-0">
         <LiveCard onNavigate={onNavigate} />
         <AtAGlance />
       </div>

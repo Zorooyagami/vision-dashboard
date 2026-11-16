@@ -124,7 +124,7 @@ export default function AiInsightsPanel({
   // a promise: start/poll failures do not call the completion callback.
   const handleRefresh = () => {
     if (generating) return;
-    generate(() => fetchInsights(window));
+    generate(() => fetchInsights(window), window);
   };
 
   const error = generateError || fetchError;
@@ -152,7 +152,7 @@ export default function AiInsightsPanel({
               color: '#4338CA',
             }}
           >
-            AI-generated
+            {insights?.mode === 'rules' ? 'Evidence-based' : 'AI-generated'}
           </span>
         </div>
 
@@ -272,6 +272,7 @@ export default function AiInsightsPanel({
         </p>
       )}
 
+      {insights?.notice && <p className="px-5 pt-2 text-xs text-slate-500">{insights.notice}</p>}
       {/* Cards */}
       {!!insightList.length && (
         <div className="flex gap-4 px-5 pb-5 pt-4 overflow-x-auto">

@@ -38,9 +38,9 @@ function AudienceIcon() {
 }
 
 const NAV = [
-  { label: 'WORKSPACE', items: [
+  { label: '', items: [
     { id: 'projects', label: 'Projects', icon: ProjectsIcon },
-    { id: 'home', label: 'Project Overview', icon: HomeIcon },
+    { id: 'home', label: 'Overview', icon: HomeIcon },
     { id: 'revenue', label: 'Revenue', icon: RevenueIcon },
     { id: 'explore', label: 'Explore', icon: ExploreIcon },
     { id: 'tools', label: 'Behavior', icon: BehaviorIcon },

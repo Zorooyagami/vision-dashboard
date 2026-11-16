@@ -96,7 +96,11 @@ export default function Topbar({
       style={{ background: '#fff', borderBottom: '1px solid #E2E8F0' }}
     >
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-        <h1 className="truncate font-bold text-[15px] text-slate-900 tracking-tight shrink-0">{title}</h1>
+        {title?.toLowerCase() !== 'projects' && (
+          <h1 className="truncate font-bold text-[15px] text-slate-900 tracking-tight shrink-0">
+            {title}
+          </h1>
+        )}
 
         {projectId && showFilters && (
           <button
@@ -314,15 +318,7 @@ export default function Topbar({
           </button>
         )}
 
-        {!showFilters && (
-          <button
-            type="button"
-            onClick={onProjectClick}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
-          >
-            Projects
-          </button>
-        )}
+       
         <div className="relative">
           <button
             onClick={() => setSearchOpen(o => !o)}
