@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PERSONAS } from '../data/personas'
+import TopbarSearch from './TopbarSearch'
 
 
 
@@ -38,8 +39,6 @@ export default function Topbar({
 }) {
   const [personaOpen, setPersonaOpen] = useState(false)
   const [dateOpen, setDateOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [customFrom, setCustomFrom] = useState(customRange?.from || '')
   const [customTo, setCustomTo] = useState(customRange?.to || '')
 
@@ -72,23 +71,6 @@ export default function Topbar({
       ? PERSONAS.find(p => p.id === selectedPersonas[0])?.name ?? '1 Persona'
       : `${selectedPersonas.length} Personas`
 
-  const searchItems = [
-    { label: 'Project Overview', path: '/home' },
-    { label: 'Conversion Funnel', path: '/explore/funnels' },
-    { label: 'Explore', path: '/explore' },
-    { label: 'Revenue by Persona', path: '/revenue' },
-    { label: 'Revenue Opportunity Radar', path: '/revenue/opportunity-radar' },
-    { label: 'Products & Audience', path: '/products-audience' },
-    { label: 'Behavior', path: '/tools' },
-    { label: 'Decision Tracking', path: '/decisions' },
-    { label: 'Alerts & Insights', path: '/alerts' },
-    { label: 'Projects', path: '/projects' },
-    { label: 'Settings', path: '/settings' },
-  ]
-
-  const filteredSearchItems = searchItems.filter((item) =>
-    item.label.toLowerCase().includes(searchQuery.trim().toLowerCase()),
-  )
 
   return (
     <header
@@ -96,11 +78,7 @@ export default function Topbar({
       style={{ background: '#fff', borderBottom: '1px solid #E2E8F0' }}
     >
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-        {title?.toLowerCase() !== 'projects' && (
-          <h1 className="truncate font-bold text-[15px] text-slate-900 tracking-tight shrink-0">
-            {title}
-          </h1>
-        )}
+        <h1 className="truncate font-bold text-[15px] text-slate-900 tracking-tight shrink-0">{title}</h1>
 
         {projectId && showFilters && (
           <button
@@ -318,58 +296,16 @@ export default function Topbar({
           </button>
         )}
 
-       
-        <div className="relative">
+        {!showFilters && (
           <button
-            onClick={() => setSearchOpen(o => !o)}
-            className="p-2 rounded-lg hover:bg-slate-100 transition-colors touch-target"
-            style={{ color: searchOpen ? '#6366F1' : '#64748B' }}
+            type="button"
+            onClick={onProjectClick}
+            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            Projects
           </button>
-          {searchOpen && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setSearchOpen(false)} />
-              <div
-                className="absolute right-0 top-full mt-1.5 w-64 rounded-xl shadow-lg border z-20 overflow-hidden"
-                style={{ background: '#fff', borderColor: '#E2E8F0' }}
-              >
-                <div className="flex items-center gap-2 px-3 py-2.5 border-b" style={{ borderColor: '#F1F5F9' }}>
-                  <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#94A3B8" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <input
-                    autoFocus
-                    type="text"
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    placeholder="Search screens…"
-                    className="flex-1 text-sm outline-none"
-                  />
-                </div>
-                {filteredSearchItems.length > 0 ? (
-                  filteredSearchItems.map((item) => (
-                    <button
-                      key={item.path}
-                      onClick={() => {
-                        onNavigatePath?.(item.path)
-                        setSearchOpen(false)
-                        setSearchQuery('')
-                      }}
-                      className="w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
-                    >
-                      {item.label}
-                    </button>
-                  ))
-                ) : (
-                  <p className="px-3 py-4 text-center text-xs text-slate-400">No matching screens</p>
-                )}
-              </div>
-            </>
-          )}
-        </div>
+        )}
+        <TopbarSearch onNavigatePath={onNavigatePath} />
 
         <div
           className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all"
