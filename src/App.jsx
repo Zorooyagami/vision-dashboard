@@ -189,7 +189,7 @@ function AuthenticatedApp() {
 
   return (
     <div
-      className="flex h-screen overflow-hidden"
+      className="flex overflow-hidden"
       style={{
         fontFamily:
           "'Inter', ui-sans-serif, system-ui, sans-serif",

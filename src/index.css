@@ -101,3 +101,7 @@ body {
     display: none !important;
   }
 }
+
+/* Interactive controls across the dashboard */
+button:not(:disabled), [role="button"]:not([aria-disabled="true"]), a[href], summary, label:has(input[type="checkbox"]), label:has(input[type="radio"]), select { cursor: pointer; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed; }

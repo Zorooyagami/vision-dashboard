@@ -68,12 +68,12 @@ export default function Sidebar({ active, onNavigate }) {
 
   return (
     <aside
-      className="flex flex-col h-screen shrink-0 transition-all duration-200"
+      className="flex flex-col shrink-0 transition-all duration-200"
       style={{ width: collapsed ? 56 : 220, background: '#0F1117', borderRight: '1px solid #1E2230' }}
     >
       {/* Logo + collapse toggle */}
       <div className="flex items-center px-3 py-4 shrink-0" style={{ borderBottom: '1px solid #1E2230', minHeight: 57 }}>
-        <div className="shrink-0">
+        <div className="shrink-0 cursor-pointer" onClick={() => onNavigate('home')}>
           <VisionLogo size={28} theme="color" showWordmark={!collapsed} wordmarkColor="#fff" />
         </div>
         {!collapsed && (
@@ -81,7 +81,7 @@ export default function Sidebar({ active, onNavigate }) {
             <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ background: '#1E2230', color: '#6366F1' }}>BETA</span>
           </div>
         )}
-        <button
+        {/* <button
           onClick={() => setCollapsed(c => !c)}
           className="shrink-0 rounded-md p-2 transition-colors hover:bg-white/5 touch-target"
           style={{ color: '#94A3B8', marginLeft: collapsed ? 0 : 4 }}
@@ -93,7 +93,7 @@ export default function Sidebar({ active, onNavigate }) {
               : <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             }
           </svg>
-        </button>
+        </button> */}
       </div>
 
       {/* Nav */}
@@ -111,7 +111,7 @@ export default function Sidebar({ active, onNavigate }) {
                   <li key={item.id} className="relative group">
                     <button
                       onClick={() => onNavigate(item.id)}
-                      className="w-full flex items-center rounded-lg text-sm font-medium transition-all"
+                      className="w-full flex items-center rounded-lg text-sm font-medium transition-all cursor-pointer"
                       style={{
                         gap: collapsed ? 0 : 10,
                         padding: collapsed ? '8px' : '8px 10px',
@@ -150,7 +150,7 @@ export default function Sidebar({ active, onNavigate }) {
       <div className="px-2 pb-3 shrink-0 hidden" style={{ borderTop: '1px solid #1E2230' }}>
         <button
           onClick={() => onNavigate('settings')}
-          className="w-full flex items-center rounded-lg transition-all hover:bg-white/5 group relative"
+          className="w-full flex items-center rounded-lg transition-all hover:bg-white/5 group relative cursor-pointer"
           style={{ gap: collapsed ? 0 : 10, padding: collapsed ? '10px 8px' : '10px', justifyContent: collapsed ? 'center' : 'flex-start', marginTop: 12 }}
         >
           <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ background: 'linear-gradient(135deg, #6366F1, #8B5CF6)' }}>AP</div>

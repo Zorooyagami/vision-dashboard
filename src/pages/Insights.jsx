@@ -35,7 +35,7 @@ function InsightDetails({ insight, onClose, onCreateDecision }) {
       <p className="mt-4 text-sm leading-relaxed text-slate-700">{insight.text}</p>
       {insight.suggestion && <div className="mt-4 rounded-xl bg-indigo-50 p-4"><h3 className="text-xs font-semibold text-indigo-700">Suggested action</h3><p className="mt-2 text-sm text-slate-700">{insight.suggestion}</p></div>}
       {insight.decisionMetric && <p className="mt-4 text-xs text-slate-500">Metric: {insight.decisionMetric}</p>}
-      <div className="mt-6 flex justify-end gap-2"><button className="rounded-lg border px-4 py-2 text-sm" onClick={onClose}>Close</button><button disabled={!onCreateDecision} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40" onClick={() => { onCreateDecision?.(decisionFor(insight)); onClose() }}>Create Decision</button></div>
+      <div className="mt-6 flex justify-end gap-2"><button className="rounded-lg border px-4 py-2 text-sm" onClick={onClose}>Close</button></div>
     </section>
   </div>
 }

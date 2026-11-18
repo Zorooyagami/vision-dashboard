@@ -49,7 +49,7 @@ function InsightCard({ insight, refreshing, onNavigate, onLogDecision }) {
         className="flex items-center gap-2 mt-4 pt-3"
         style={{ borderTop: '1px solid #F1F5F9' }}
       >
-        <button
+        {/* <button
           onClick={() =>
             onLogDecision?.({
               title: insight.decisionTitle,
@@ -61,9 +61,9 @@ function InsightCard({ insight, refreshing, onNavigate, onLogDecision }) {
           style={{ background: '#6366F1' }}
         >
           Log Decision
-        </button>
+        </button> */}
 
-        <button
+        {/* <button
           onClick={() => onNavigate?.(insight.screen)}
           aria-label="View detail"
           className="p-1.5 rounded-lg hover:bg-white/60 transition-colors"
@@ -83,7 +83,7 @@ function InsightCard({ insight, refreshing, onNavigate, onLogDecision }) {
               d="M9 5l7 7-7 7"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
     </div>
   )

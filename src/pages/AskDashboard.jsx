@@ -11,6 +11,11 @@ const examples = [
   ['See a trend', 'Show daily sessions and conversion for the last 14 days'],
   ['Compare devices', 'Compare mobile and desktop checkout conversion this month'],
   ['Follow the journey', 'Show the funnel from product view to purchase this week'],
+  ['Spot product gaps', 'Which products were viewed but never bought?'],
+  ['See top cities', 'Which city has the most users?'],
+  ['Audience devices', 'Are most users on desktop or mobile?'],
+  ['Find top customers', 'Which user spent the most?'],
+  ['Cart trends', 'Which product is removed from cart the most in lifetime?'],
   ['Explore activity', 'Show the top 10 pages by page views as a table'],
 ]
 export default function AskDashboard() {
